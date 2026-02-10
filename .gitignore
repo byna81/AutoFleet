@@ -1,0 +1,113 @@
+# ========================================
+# AutoFleet - .gitignore
+# ========================================
+
+# ========================================
+# FICHIERS SENSIBLES - NE JAMAIS COMMITER
+# ========================================
+.env
+.env.local
+.env.production
+.env.*.local
+*.pem
+*.key
+*.crt
+
+# Secrets et mots de passe
+secrets/
+credentials/
+
+# ========================================
+# Node.js
+# ========================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Logs
+logs/
+*.log
+
+# ========================================
+# Frontend (React/Vite)
+# ========================================
+frontend/dist/
+frontend/build/
+frontend/.vite/
+frontend/.cache/
+
+# ========================================
+# Backend
+# ========================================
+backend/uploads/
+backend/logs/
+backend/*.log
+
+# ========================================
+# Base de données
+# ========================================
+*.sql.gz
+*.dump
+backups/
+*.backup
+
+# Mais garder les schémas
+!database/schema.sql
+!database/extension-*.sql
+
+# ========================================
+# IDE / Éditeurs
+# ========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ========================================
+# OS
+# ========================================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ========================================
+# Tests
+# ========================================
+coverage/
+.nyc_output/
+*.lcov
+
+# ========================================
+# Temporaires
+# ========================================
+tmp/
+temp/
+*.tmp
+*.bak
+
+# ========================================
+# PM2
+# ========================================
+.pm2/
+pm2.log
+
+# ========================================
+# SSL Certificates
+# ========================================
+*.pem
+*.cert
+*.key
+ssl/
+
+# ========================================
+# GARDER ces fichiers importants
+# ========================================
+!.env.example
+!.gitignore
+!README.md
+!LICENSE
