@@ -1,9 +1,23 @@
-// Payments.jsx - Gestion des versements avec Type de contrat et Modification tracée
+// Payments.jsx - Gestion des versements (VERSION CORRIGÉE)
 import React, { useState } from 'react';
 import { Plus, History, Edit } from 'lucide-react';
-import { drivers, contracts } from '../data/mockData';
 
 const Payments = ({ payments, setPayments, currentUser }) => {
+  // Données importées depuis le parent (App.jsx)
+  const drivers = [
+    { id: 1, name: 'Mamadou Diallo', photo: '👨🏿', phone: '+221 77 123 4567', contractId: 1, vehicleId: 'DK-123-AB', status: 'active' },
+    { id: 2, name: 'Ibrahima Sarr', photo: '👨🏿‍🦱', phone: '+221 76 234 5678', contractId: 2, vehicleId: 'DK-456-CD', status: 'active' },
+    { id: 3, name: 'Moussa Ndiaye', photo: '👨🏿‍🦲', phone: '+221 78 345 6789', contractId: 3, vehicleId: 'DK-789-EF', status: 'active' },
+    { id: 4, name: 'Cheikh Ba', photo: '👨🏿', phone: '+221 77 456 7890', contractId: 4, vehicleId: 'DK-012-GH', status: 'active' }
+  ];
+
+  const contracts = [
+    { id: 1, driverId: 1, vehicleId: 'DK-123-AB', type: 'LAO', dailyAmount: 15000, status: 'active' },
+    { id: 2, driverId: 2, vehicleId: 'DK-456-CD', type: 'Location', dailyAmount: 12000, status: 'active' },
+    { id: 3, driverId: 3, vehicleId: 'DK-789-EF', type: 'Location', dailyAmount: 10000, status: 'active' },
+    { id: 4, driverId: 4, vehicleId: 'DK-012-GH', type: 'LAO', dailyAmount: 16000, status: 'active' }
+  ];
+
   const [showAddPayment, setShowAddPayment] = useState(false);
   const [selectedPaymentDriver, setSelectedPaymentDriver] = useState(null);
   const [newPayment, setNewPayment] = useState({
@@ -30,7 +44,7 @@ const Payments = ({ payments, setPayments, currentUser }) => {
     const contractAmount = contract.dailyAmount;
 
     if (paymentAmount !== contractAmount) {
-      const confirmed = confirm(
+      const confirmed = window.confirm(
         `⚠️ ATTENTION!\n\nMontant saisi: ${paymentAmount.toLocaleString()} FCFA\nMontant contrat ${contract.type}: ${contractAmount.toLocaleString()} FCFA\n\nVoulez-vous continuer?`
       );
       if (!confirmed) return;
@@ -52,7 +66,7 @@ const Payments = ({ payments, setPayments, currentUser }) => {
     };
 
     setPayments([payment, ...payments]);
-    alert(`✅ Paiement enregistré!\n\nChauffeur: ${driver.name}\nMontant: ${paymentAmount.toLocaleString()} FCFA\nType: ${contract.type}\nEnregistré par: ${currentUser.name}`);
+    alert(`✅ Paiement enregistré!\n\nChauffeur: ${driver.name}\nMontant: ${paymentAmount.toLocaleString()} FCFA\nType: ${contract.type}`);
     setShowAddPayment(false);
     setSelectedPaymentDriver(null);
     setNewPayment({
@@ -94,13 +108,6 @@ const Payments = ({ payments, setPayments, currentUser }) => {
       };
     }
 
-    if (oldPayment.time !== editingPayment.time) {
-      modification.changes.time = {
-        old: oldPayment.time,
-        new: editingPayment.time
-      };
-    }
-
     const updatedPayments = payments.map(p => {
       if (p.id === editingPayment.id) {
         return {
@@ -120,7 +127,7 @@ const Payments = ({ payments, setPayments, currentUser }) => {
     setPayments(updatedPayments);
     
     const driver = drivers.find(d => d.id === editingPayment.driverId);
-    alert(`✅ Versement modifié avec succès!\n\nChauffeur: ${driver?.name}\nNouveau montant: ${parseFloat(editingPayment.amount).toLocaleString()} FCFA\nModifié par: ${currentUser.name}\nMotif: ${editingPayment.modificationReason}`);
+    alert(`✅ Versement modifié!\nChauffeur: ${driver?.name}\nNouveau montant: ${parseFloat(editingPayment.amount).toLocaleString()} FCFA`);
     
     setEditingPayment(null);
   };
@@ -169,12 +176,10 @@ const Payments = ({ payments, setPayments, currentUser }) => {
               {selectedPaymentDriver && (
                 <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded">
                   <p className="text-sm text-blue-900">
-                    <strong>Type de contrat:</strong>{' '}
-                    {contracts.find(c => c.driverId === selectedPaymentDriver)?.type}
+                    <strong>Type:</strong> {contracts.find(c => c.driverId === selectedPaymentDriver)?.type}
                   </p>
                   <p className="text-sm text-blue-900">
-                    <strong>Montant journalier:</strong>{' '}
-                    {contracts.find(c => c.driverId === selectedPaymentDriver)?.dailyAmount.toLocaleString()} FCFA
+                    <strong>Montant:</strong> {contracts.find(c => c.driverId === selectedPaymentDriver)?.dailyAmount.toLocaleString()} FCFA
                   </p>
                 </div>
               )}
@@ -209,26 +214,13 @@ const Payments = ({ payments, setPayments, currentUser }) => {
                   required
                 />
               </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">Notes (optionnel)</label>
-                <textarea
-                  value={newPayment.notes}
-                  onChange={(e) => setNewPayment({...newPayment, notes: e.target.value})}
-                  className="w-full px-4 py-2 border rounded-lg"
-                  rows="2"
-                  placeholder="Remarques éventuelles..."
-                />
-              </div>
               <div className="flex gap-2">
                 <button type="submit" className="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
                   Enregistrer
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    setShowAddPayment(false);
-                    setSelectedPaymentDriver(null);
-                  }}
+                  onClick={() => setShowAddPayment(false)}
                   className="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg"
                 >
                   Annuler
@@ -243,27 +235,8 @@ const Payments = ({ payments, setPayments, currentUser }) => {
       {editingPayment && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-8 max-w-md w-full">
-            <h2 className="text-2xl font-bold mb-6">✏️ Modifier le versement</h2>
+            <h2 className="text-2xl font-bold mb-6">Modifier le versement</h2>
             <form onSubmit={handleEditPayment}>
-              <div className="mb-4 p-4 bg-gray-50 rounded border">
-                <p className="text-sm text-gray-600">
-                  <strong>Chauffeur:</strong> {drivers.find(d => d.id === editingPayment.driverId)?.name}
-                </p>
-                <p className="text-sm text-gray-600">
-                  <strong>Type:</strong>{' '}
-                  <span className={`px-2 py-1 rounded text-xs font-bold ${
-                    contracts.find(c => c.id === editingPayment.contractId)?.type === 'LAO'
-                      ? 'bg-blue-100 text-blue-800'
-                      : 'bg-green-100 text-green-800'
-                  }`}>
-                    {contracts.find(c => c.id === editingPayment.contractId)?.type}
-                  </span>
-                </p>
-                <p className="text-sm text-gray-600">
-                  <strong>Enregistré par:</strong> {editingPayment.recordedBy}
-                </p>
-              </div>
-
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-2">Montant (FCFA)</label>
                 <input
@@ -276,47 +249,22 @@ const Payments = ({ payments, setPayments, currentUser }) => {
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">Date</label>
-                <input
-                  type="date"
-                  value={editingPayment.date}
-                  onChange={(e) => setEditingPayment({...editingPayment, date: e.target.value})}
-                  className="w-full px-4 py-2 border rounded-lg"
-                  required
-                />
-              </div>
-
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">Heure</label>
-                <input
-                  type="time"
-                  value={editingPayment.time}
-                  onChange={(e) => setEditingPayment({...editingPayment, time: e.target.value})}
-                  className="w-full px-4 py-2 border rounded-lg"
-                  required
-                />
-              </div>
-
-              <div className="mb-4">
                 <label className="block text-sm font-medium mb-2">
-                  Motif de modification <span className="text-red-500">*</span>
+                  Motif <span className="text-red-500">*</span>
                 </label>
                 <textarea
                   value={editingPayment.modificationReason || ''}
                   onChange={(e) => setEditingPayment({...editingPayment, modificationReason: e.target.value})}
                   className="w-full px-4 py-2 border rounded-lg"
                   rows="3"
-                  placeholder="Ex: Erreur de saisie, montant corrigé selon contrat, etc."
+                  placeholder="Ex: Erreur de saisie..."
                   required
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  ⚠️ Le motif est obligatoire pour la traçabilité
-                </p>
               </div>
 
               <div className="flex gap-2">
-                <button type="submit" className="flex-1 bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700">
-                  ✅ Valider la modification
+                <button type="submit" className="flex-1 bg-orange-600 text-white py-2 rounded-lg">
+                  Valider
                 </button>
                 <button
                   type="button"
@@ -331,7 +279,7 @@ const Payments = ({ payments, setPayments, currentUser }) => {
         </div>
       )}
 
-      {/* Liste des versements */}
+      {/* Tableau */}
       <div className="bg-white rounded-xl shadow-lg overflow-hidden">
         <table className="w-full">
           <thead className="bg-gray-50">
@@ -350,56 +298,31 @@ const Payments = ({ payments, setPayments, currentUser }) => {
               const contract = contracts.find(c => c.id === payment.contractId);
               
               return (
-                <tr key={payment.id} className={payment.modifications?.length > 0 ? 'bg-yellow-50' : ''}>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <span>{driver?.name}</span>
-                      {payment.modifications?.length > 0 && (
-                        <span className="text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded" title="Ce versement a été modifié">
-                          ✏️
-                        </span>
-                      )}
-                    </div>
-                  </td>
+                <tr key={payment.id}>
+                  <td className="px-6 py-4">{driver?.name}</td>
                   <td className="px-6 py-4">{payment.date} à {payment.time}</td>
                   <td className="px-6 py-4">
                     <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                      contract?.type === 'LAO' 
-                        ? 'bg-blue-100 text-blue-800' 
-                        : 'bg-green-100 text-green-800'
+                      contract?.type === 'LAO' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
                     }`}>
                       {contract?.type || 'N/A'}
                     </span>
                   </td>
                   <td className="px-6 py-4 font-bold">{payment.amount.toLocaleString()} FCFA</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
-                    {payment.recordedBy}
-                    {payment.lastModifiedBy && (
-                      <div className="text-xs text-orange-600">
-                        Modifié par {payment.lastModifiedBy}
-                      </div>
-                    )}
-                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-600">{payment.recordedBy}</td>
                   <td className="px-6 py-4">
                     <div className="flex gap-2">
                       <button
-                        onClick={() => setEditingPayment({
-                          ...payment,
-                          modificationReason: ''
-                        })}
-                        className="text-orange-600 hover:text-orange-800 flex items-center gap-1"
-                        title="Modifier ce versement"
+                        onClick={() => setEditingPayment({...payment, modificationReason: ''})}
+                        className="text-orange-600 hover:text-orange-800"
                       >
                         <Edit size={16} />
-                        Modifier
                       </button>
                       <button
                         onClick={() => setShowPaymentHistory(payment)}
-                        className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
-                        title="Voir l'historique des modifications"
+                        className="text-blue-600 hover:text-blue-800"
                       >
-                        <History size={16} />
-                        Historique ({payment.modifications?.length || 0})
+                        <History size={16} /> ({payment.modifications?.length || 0})
                       </button>
                     </div>
                   </td>
@@ -408,86 +331,28 @@ const Payments = ({ payments, setPayments, currentUser }) => {
             })}
           </tbody>
         </table>
-
-        {payments.length === 0 && (
-          <div className="text-center py-12 text-gray-500">
-            <p>Aucun versement enregistré</p>
-          </div>
-        )}
       </div>
 
       {/* Modal Historique */}
       {showPaymentHistory && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-            <h2 className="text-2xl font-bold mb-4">📜 Historique des modifications</h2>
-            
-            <div className="mb-6 p-4 bg-gray-50 rounded border">
-              <div className="grid grid-cols-2 gap-2 text-sm">
-                <p><strong>Chauffeur:</strong> {drivers.find(d => d.id === showPaymentHistory.driverId)?.name}</p>
-                <p><strong>Montant actuel:</strong> {showPaymentHistory.amount.toLocaleString()} FCFA</p>
-                <p><strong>Date:</strong> {showPaymentHistory.date}</p>
-                <p><strong>Heure:</strong> {showPaymentHistory.time}</p>
-                <p className="col-span-2"><strong>Enregistré par:</strong> {showPaymentHistory.recordedBy}</p>
-                <p className="col-span-2 text-xs text-gray-500">
-                  Le {new Date(showPaymentHistory.recordedAt).toLocaleString('fr-FR')}
-                </p>
-              </div>
-            </div>
-
-            {showPaymentHistory.modifications && showPaymentHistory.modifications.length > 0 ? (
-              <div className="space-y-4">
-                <h3 className="font-bold text-lg">Modifications ({showPaymentHistory.modifications.length})</h3>
+          <div className="bg-white rounded-xl p-8 max-w-2xl w-full">
+            <h2 className="text-2xl font-bold mb-4">Historique</h2>
+            {showPaymentHistory.modifications?.length > 0 ? (
+              <div>
                 {showPaymentHistory.modifications.map((mod, idx) => (
-                  <div key={idx} className="border-l-4 border-yellow-500 bg-yellow-50 rounded p-4">
-                    <div className="flex justify-between items-start mb-2">
-                      <p className="font-bold text-yellow-900">Modification #{idx + 1}</p>
-                      <span className="text-xs text-gray-600">
-                        {new Date(mod.modifiedAt).toLocaleString('fr-FR')}
-                      </span>
-                    </div>
-                    
-                    <p className="text-sm mb-2">
-                      <strong>Par:</strong> {mod.modifiedBy}
-                    </p>
-                    
-                    <div className="bg-white p-3 rounded mb-2">
-                      <p className="text-sm font-bold mb-1">Motif:</p>
-                      <p className="text-sm text-gray-700">{mod.reason}</p>
-                    </div>
-
-                    {Object.keys(mod.changes).length > 0 && (
-                      <div className="bg-white p-3 rounded">
-                        <p className="text-sm font-bold mb-2">Changements:</p>
-                        {Object.entries(mod.changes).map(([key, change]) => (
-                          <div key={key} className="text-sm mb-1">
-                            <span className="font-medium">{key === 'amount' ? 'Montant' : key === 'date' ? 'Date' : 'Heure'}:</span>
-                            <span className="text-red-600 line-through ml-2">
-                              {typeof change.old === 'number' ? change.old.toLocaleString() : change.old}
-                            </span>
-                            <span className="mx-2">→</span>
-                            <span className="text-green-600 font-bold">
-                              {typeof change.new === 'number' ? change.new.toLocaleString() : change.new}
-                            </span>
-                            {typeof change.new === 'number' && <span> FCFA</span>}
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                  <div key={idx} className="mb-3 p-3 bg-yellow-50 rounded">
+                    <p><strong>Par:</strong> {mod.modifiedBy}</p>
+                    <p><strong>Motif:</strong> {mod.reason}</p>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8 text-gray-500">
-                <History size={48} className="mx-auto mb-4 opacity-50" />
-                <p>Aucune modification effectuée sur ce versement</p>
-                <p className="text-sm mt-2">Le versement est dans son état d'origine</p>
-              </div>
+              <p className="text-gray-500">Aucune modification</p>
             )}
-
             <button
               onClick={() => setShowPaymentHistory(null)}
-              className="mt-6 w-full bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400"
+              className="mt-4 w-full bg-gray-300 py-2 rounded-lg"
             >
               Fermer
             </button>
