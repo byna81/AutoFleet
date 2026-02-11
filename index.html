@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoFleet - Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="module">
+        import React from 'https://esm.sh/react@18.2.0';
+        import ReactDOM from 'https://esm.sh/react-dom@18.2.0/client';
+        
+        // Ici on chargerait normalement le fichier App.jsx
+        // Pour un test rapide, affichons juste un message
+        
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(
+            React.createElement('div', { className: 'min-h-screen bg-gray-100 flex items-center justify-center' },
+                React.createElement('div', { className: 'bg-white p-8 rounded-xl shadow-lg text-center' },
+                    React.createElement('h1', { className: 'text-4xl font-bold mb-4' },
+                        'AutoFleet'
+                    ),
+                    React.createElement('p', { className: 'text-gray-600' },
+                        'Le site est en cours de déploiement...'
+                    )
+                )
+            )
+        );
+    </script>
+</body>
+</html>
