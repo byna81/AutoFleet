@@ -1,3 +1,30 @@
+// mockData.js - Toutes les données AutoFleet v2
+
+export const users = [
+  { 
+    id: 1, 
+    username: 'admin', 
+    password: 'admin123', 
+    name: 'Amadou Seck',
+    role: 'Administrateur',
+    email: 'admin@autofleet.sn',
+    phone: '+221 77 999 8888',
+    avatar: '👨🏿‍💼',
+    permissions: ['all']
+  },
+  { 
+    id: 2, 
+    username: 'fatou', 
+    password: 'gestion123', 
+    name: 'Fatou Diop',
+    role: 'Gestionnaire',
+    email: 'fatou.diop@autofleet.sn',
+    phone: '+221 76 888 7777',
+    avatar: '👩🏿‍💼',
+    permissions: ['drivers', 'contracts', 'payments', 'vehicles', 'maintenance', 'alerts']
+  }
+];
+
 export const drivers = [
   { id: 1, name: 'Mamadou Diallo', phone: '+221 77 123 4567', contractId: 1, vehicleId: 'DK-123-AB' },
   { id: 2, name: 'Ibrahima Sarr', phone: '+221 76 234 5678', contractId: 2, vehicleId: 'DK-456-CD' },
@@ -22,4 +49,12 @@ export const contracts = [
 export const managementContracts = [
   { id: 1, vehicleId: 'DK-789-EF', ownerName: 'Ousmane Fall', driverDailyPayment: 10000, ownerDailyShare: 8000, companyDailyShare: 2000 },
   { id: 2, vehicleId: 'DK-012-GH', ownerName: 'Awa Diagne', driverDailyPayment: 16000, ownerDailyShare: 14000, companyDailyShare: 2000 }
+];
+
+export const initialPayments = [
+  { id: 1, driverId: 1, contractId: 1, date: '2025-02-10', amount: 15000, status: 'paid', time: '18:30', recordedBy: 'Amadou Seck', recordedById: 1, recordedAt: '2025-02-10T18:30:00', modifications: [] },
+  { id: 2, driverId: 1, contractId: 1, date: '2025-02-09', amount: 15000, status: 'paid', time: '19:15', recordedBy: 'Amadou Seck', recordedById: 1, recordedAt: '2025-02-09T19:15:00', modifications: [] },
+  { id: 3, driverId: 2, contractId: 2, date: '2025-02-10', amount: 12000, status: 'paid', time: '17:45', recordedBy: 'Fatou Diop', recordedById: 2, recordedAt: '2025-02-10T17:45:00', modifications: [] },
+  { id: 4, driverId: 3, contractId: 3, date: '2025-02-10', amount: 10000, status: 'paid', time: '19:00', recordedBy: 'Fatou Diop', recordedById: 2, recordedAt: '2025-02-10T19:00:00', modifications: [] },
+  { id: 5, driverId: 4, contractId: 4, date: '2025-02-10', amount: 16000, status: 'paid', time: '18:00', recordedBy: 'Fatou Diop', recordedById: 2, recordedAt: '2025-02-10T18:00:00', modifications: [] }
 ];
