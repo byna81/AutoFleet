@@ -1,14 +1,26 @@
-// App.jsx - Application principale CORRIGÉE avec tous les props
+// App.jsx - Application principale COMPLÈTE avec tous les composants
 import React, { useState } from 'react';
 import Login from './components/Login';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import Payments from './components/Payments';
+import Drivers from './components/Drivers';
+import Contracts from './components/Contracts';
 import Vehicles from './components/Vehicles';
 import Owners from './components/Owners';
 import Users from './components/Users';
 import OwnerPayments from './components/OwnerPayments';
-import { users as initialUsers, initialPayments, initialOwnerPayments, managementContracts as initialManagementContracts, contracts, vehicles as initialVehicles } from './data/mockData';
+import Maintenance from './components/Maintenance';
+import { 
+  users as initialUsers, 
+  initialPayments, 
+  initialOwnerPayments, 
+  managementContracts as initialManagementContracts, 
+  contracts as initialContracts,
+  drivers as initialDrivers,
+  vehicles as initialVehicles,
+  maintenanceSchedule as initialMaintenanceSchedule
+} from './data/mockData';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -21,6 +33,9 @@ const App = () => {
   const [ownerPayments, setOwnerPayments] = useState(initialOwnerPayments);
   const [managementContracts, setManagementContracts] = useState(initialManagementContracts);
   const [vehicles, setVehicles] = useState(initialVehicles);
+  const [drivers, setDrivers] = useState(initialDrivers);
+  const [contracts, setContracts] = useState(initialContracts);
+  const [maintenanceSchedule, setMaintenanceSchedule] = useState(initialMaintenanceSchedule);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -91,6 +106,25 @@ const App = () => {
               payments={payments}
               setPayments={setPayments}
               currentUser={currentUser}
+              drivers={drivers}
+              contracts={contracts}
+            />
+          )}
+
+          {activeTab === 'drivers' && (
+            <Drivers
+              drivers={drivers}
+              setDrivers={setDrivers}
+              contracts={contracts}
+              vehicles={vehicles}
+            />
+          )}
+
+          {activeTab === 'contracts' && (
+            <Contracts
+              contracts={contracts}
+              drivers={drivers}
+              vehicles={vehicles}
             />
           )}
           
@@ -123,6 +157,15 @@ const App = () => {
               currentUser={currentUser}
               managementContracts={managementContracts}
               contracts={contracts}
+            />
+          )}
+
+          {activeTab === 'maintenance' && (
+            <Maintenance
+              maintenanceSchedule={maintenanceSchedule}
+              setMaintenanceSchedule={setMaintenanceSchedule}
+              vehicles={vehicles}
+              currentUser={currentUser}
             />
           )}
           
