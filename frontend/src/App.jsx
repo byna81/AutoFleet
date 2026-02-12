@@ -1,4 +1,4 @@
-// App.jsx - Application principale AutoFleet
+// App.jsx - Application principale avec OwnerPayments
 import React, { useState } from 'react';
 import Login from './components/Login';
 import Sidebar from './components/Sidebar';
@@ -7,7 +7,8 @@ import Payments from './components/Payments';
 import Vehicles from './components/Vehicles';
 import Owners from './components/Owners';
 import Users from './components/Users';
-import { users as initialUsers, initialPayments } from './data/mockData';
+import OwnerPayments from './components/OwnerPayments';
+import { users as initialUsers, initialPayments, initialOwnerPayments, managementContracts, contracts } from './data/mockData';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -17,6 +18,7 @@ const App = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [allUsers, setAllUsers] = useState(initialUsers);
   const [payments, setPayments] = useState(initialPayments);
+  const [ownerPayments, setOwnerPayments] = useState(initialOwnerPayments);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -90,6 +92,16 @@ const App = () => {
           )}
           {activeTab === 'vehicles' && <Vehicles payments={payments} />}
           {activeTab === 'owners' && <Owners />}
+          {activeTab === 'owner-payments' && (
+            <OwnerPayments
+              payments={payments}
+              ownerPayments={ownerPayments}
+              setOwnerPayments={setOwnerPayments}
+              currentUser={currentUser}
+              managementContracts={managementContracts}
+              contracts={contracts}
+            />
+          )}
           {activeTab === 'users' && hasPermission('all') && (
             <Users
               allUsers={allUsers}
