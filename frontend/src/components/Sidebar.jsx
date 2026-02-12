@@ -1,4 +1,4 @@
-// Sidebar.jsx - Menu avec 7 onglets (regroupement Maintenance + Paiements)
+// Sidebar.jsx - Menu latéral SANS barre jaune
 import React from 'react';
 import { LogOut } from 'lucide-react';
 
@@ -64,6 +64,20 @@ const Sidebar = ({ currentUser, activeTab, setActiveTab, handleLogout, hasPermis
           className={`w-full text-left p-3 rounded ${activeTab === 'owners' ? 'bg-red-800' : 'hover:bg-red-800'}`}
         >
           🏢 Propriétaires
+        </button>
+
+        <button 
+          onClick={() => setActiveTab('owner-payments')} 
+          className={`w-full text-left p-3 rounded ${activeTab === 'owner-payments' ? 'bg-red-800' : 'hover:bg-red-800'}`}
+        >
+          💵 Paiements propriétaires
+        </button>
+
+        <button 
+          onClick={() => setActiveTab('maintenance')} 
+          className={`w-full text-left p-3 rounded ${activeTab === 'maintenance' ? 'bg-red-800' : 'hover:bg-red-800'}`}
+        >
+          🔧 Maintenance
         </button>
 
         {hasPermission('all') && (
