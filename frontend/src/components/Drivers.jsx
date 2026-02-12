@@ -1,23 +1,135 @@
-// Drivers.jsx - Gestion des chauffeurs
+// Drivers-v2.jsx - Gestion chauffeurs avec CRUD + Validation Admin
 import React, { useState } from 'react';
-import { Edit, Phone, Mail, Calendar, AlertCircle } from 'lucide-react';
+import { Edit, Phone, Mail, Calendar, AlertCircle, Plus, Trash2, CheckCircle, XCircle } from 'lucide-react';
 
-const Drivers = ({ drivers, setDrivers, contracts, vehicles }) => {
+const Drivers = ({ drivers, setDrivers, contracts, vehicles, currentUser, hasPermission }) => {
   const [editingDriver, setEditingDriver] = useState(null);
+  const [showAddDriver, setShowAddDriver] = useState(false);
+  const [newDriver, setNewDriver] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    address: '',
+    licenseNumber: '',
+    licenseExpiry: '',
+    cin: '',
+    restDay: 'Lundi',
+    photo: '👨🏿'
+  });
+
+  const pendingDrivers = drivers?.filter(d => d.status === 'pending') || [];
+  const validatedDrivers = drivers?.filter(d => d.status === 'active' || !d.status) || [];
+
+  const handleAddDriver = (e) => {
+    e.preventDefault();
+
+    const driver = {
+      id: (drivers?.length || 0) + 1,
+      ...newDriver,
+      status: hasPermission('all') ? 'active' : 'pending',
+      createdBy: currentUser.id,
+      createdByName: currentUser.name,
+      createdAt: new Date().toISOString()
+    };
+
+    if (hasPermission('all')) {
+      driver.validatedBy = currentUser.id;
+      driver.validatedByName = currentUser.name;
+      driver.validatedAt = new Date().toISOString();
+    }
+
+    setDrivers([...(drivers || []), driver]);
+
+    alert(
+      hasPermission('all')
+        ? `✅ Chauffeur ajouté et validé!\n${newDriver.name}`
+        : `✅ Chauffeur ajouté!\nEn attente de validation Admin\n${newDriver.name}`
+    );
+
+    setShowAddDriver(false);
+    setNewDriver({
+      name: '',
+      phone: '',
+      email: '',
+      address: '',
+      licenseNumber: '',
+      licenseExpiry: '',
+      cin: '',
+      restDay: 'Lundi',
+      photo: '👨🏿'
+    });
+  };
 
   const handleUpdateRestDay = (e) => {
     e.preventDefault();
     
-    const updatedDrivers = drivers.map(d => {
+    const updatedDrivers = (drivers || []).map(d => {
       if (d.id === editingDriver.id) {
-        return { ...d, restDay: editingDriver.restDay };
+        return { 
+          ...d, 
+          restDay: editingDriver.restDay,
+          modifiedBy: currentUser.id,
+          modifiedByName: currentUser.name,
+          modifiedAt: new Date().toISOString()
+        };
       }
       return d;
     });
 
     setDrivers(updatedDrivers);
-    alert(`✅ Jour de repos mis à jour!\n\n${editingDriver.name} : ${editingDriver.restDay}`);
+    alert(`✅ Jour de repos mis à jour!\n${editingDriver.name} : ${editingDriver.restDay}`);
     setEditingDriver(null);
+  };
+
+  const handleDeleteDriver = (driverId) => {
+    const driver = (drivers || []).find(d => d.id === driverId);
+    if (!driver) return;
+
+    if (window.confirm(`Supprimer le chauffeur ${driver.name} ?`)) {
+      const updatedDrivers = (drivers || []).filter(d => d.id !== driverId);
+      setDrivers(updatedDrivers);
+      alert('✅ Chauffeur supprimé');
+    }
+  };
+
+  const handleValidateDriver = (driverId) => {
+    const updatedDrivers = (drivers || []).map(d => {
+      if (d.id === driverId) {
+        return {
+          ...d,
+          status: 'active',
+          validatedBy: currentUser.id,
+          validatedByName: currentUser.name,
+          validatedAt: new Date().toISOString()
+        };
+      }
+      return d;
+    });
+
+    setDrivers(updatedDrivers);
+    alert('✅ Chauffeur validé');
+  };
+
+  const handleRejectDriver = (driverId) => {
+    const reason = window.prompt('Motif du rejet:');
+    if (!reason) return;
+
+    const updatedDrivers = (drivers || []).map(d => {
+      if (d.id === driverId) {
+        return {
+          ...d,
+          status: 'rejected',
+          rejectedBy: currentUser.id,
+          rejectedByName: currentUser.name,
+          rejectedAt: new Date().toISOString(),
+          rejectionReason: reason
+        };
+      }
+      return d;
+    });
+
+    setDrivers(updatedDrivers);
+    alert('❌ Chauffeur rejeté');
   };
 
   const getDriverContract = (driverId) => {
@@ -30,10 +142,170 @@ const Drivers = ({ drivers, setDrivers, contracts, vehicles }) => {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold">👨‍✈️ Gestion des chauffeurs</h1>
-        <p className="text-gray-600 mt-2">{drivers.length} chauffeur(s) actif(s)</p>
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-3xl font-bold">👨‍✈️ Gestion des chauffeurs</h1>
+          <p className="text-gray-600 mt-2">{validatedDrivers.length} chauffeur(s) actif(s)</p>
+        </div>
+        <button
+          onClick={() => setShowAddDriver(true)}
+          className="bg-green-600 text-white px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-green-700"
+        >
+          <Plus size={20} />
+          Ajouter un chauffeur
+        </button>
       </div>
+
+      {/* Validations en attente - Admin uniquement */}
+      {hasPermission('all') && pendingDrivers.length > 0 && (
+        <div className="mb-8 bg-yellow-50 border-2 border-yellow-300 rounded-xl p-6">
+          <h2 className="text-xl font-bold text-yellow-900 mb-4 flex items-center gap-2">
+            <AlertCircle size={24} />
+            ⚠️ Validations en attente ({pendingDrivers.length})
+          </h2>
+          <div className="space-y-3">
+            {pendingDrivers.map(driver => (
+              <div key={driver.id} className="bg-white p-4 rounded-lg border border-yellow-200">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="font-bold text-lg">{driver.name}</p>
+                    <p className="text-sm text-gray-600">Téléphone: {driver.phone}</p>
+                    <p className="text-sm text-gray-600">Permis: {driver.licenseNumber}</p>
+                    <p className="text-sm text-gray-500">Créé par: {driver.createdByName}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleValidateDriver(driver.id)}
+                      className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 flex items-center gap-1"
+                    >
+                      <CheckCircle size={16} />
+                      Valider
+                    </button>
+                    <button
+                      onClick={() => handleRejectDriver(driver.id)}
+                      className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center gap-1"
+                    >
+                      <XCircle size={16} />
+                      Rejeter
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Modal Ajout */}
+      {showAddDriver && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-8 max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <h2 className="text-2xl font-bold mb-6">Nouveau chauffeur</h2>
+            <form onSubmit={handleAddDriver}>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">Nom complet</label>
+                <input
+                  type="text"
+                  value={newDriver.name}
+                  onChange={(e) => setNewDriver({...newDriver, name: e.target.value})}
+                  className="w-full px-4 py-2 border rounded-lg"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">Téléphone</label>
+                <input
+                  type="tel"
+                  value={newDriver.phone}
+                  onChange={(e) => setNewDriver({...newDriver, phone: e.target.value})}
+                  className="w-full px-4 py-2 border rounded-lg"
+                  placeholder="+221 XX XXX XXXX"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">Email</label>
+                <input
+                  type="email"
+                  value={newDriver.email}
+                  onChange={(e) => setNewDriver({...newDriver, email: e.target.value})}
+                  className="w-full px-4 py-2 border rounded-lg"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">Adresse</label>
+                <input
+                  type="text"
+                  value={newDriver.address}
+                  onChange={(e) => setNewDriver({...newDriver, address: e.target.value})}
+                  className="w-full px-4 py-2 border rounded-lg"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">N° Permis</label>
+                <input
+                  type="text"
+                  value={newDriver.licenseNumber}
+                  onChange={(e) => setNewDriver({...newDriver, licenseNumber: e.target.value})}
+                  className="w-full px-4 py-2 border rounded-lg"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">Expiration permis</label>
+                <input
+                  type="date"
+                  value={newDriver.licenseExpiry}
+                  onChange={(e) => setNewDriver({...newDriver, licenseExpiry: e.target.value})}
+                  className="w-full px-4 py-2 border rounded-lg"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">N° CIN</label>
+                <input
+                  type="text"
+                  value={newDriver.cin}
+                  onChange={(e) => setNewDriver({...newDriver, cin: e.target.value})}
+                  className="w-full px-4 py-2 border rounded-lg"
+                  required
+                />
+              </div>
+              <div className="mb-6">
+                <label className="block text-sm font-medium mb-2">Jour de repos</label>
+                <select
+                  value={newDriver.restDay}
+                  onChange={(e) => setNewDriver({...newDriver, restDay: e.target.value})}
+                  className="w-full px-4 py-2 border rounded-lg"
+                  required
+                >
+                  <option value="Lundi">Lundi</option>
+                  <option value="Mardi">Mardi</option>
+                  <option value="Mercredi">Mercredi</option>
+                  <option value="Jeudi">Jeudi</option>
+                  <option value="Vendredi">Vendredi</option>
+                  <option value="Samedi">Samedi</option>
+                  <option value="Dimanche">Dimanche</option>
+                </select>
+              </div>
+              <div className="flex gap-2">
+                <button type="submit" className="flex-1 bg-green-600 text-white py-2 rounded-lg">
+                  Créer
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowAddDriver(false)}
+                  className="flex-1 bg-gray-300 py-2 rounded-lg"
+                >
+                  Annuler
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Modal Modification jour de repos */}
       {editingDriver && (
@@ -44,9 +316,7 @@ const Drivers = ({ drivers, setDrivers, contracts, vehicles }) => {
             
             <form onSubmit={handleUpdateRestDay}>
               <div className="mb-6">
-                <label className="block text-sm font-medium mb-2">
-                  Jour de repos
-                </label>
+                <label className="block text-sm font-medium mb-2">Jour de repos</label>
                 <select
                   value={editingDriver.restDay}
                   onChange={(e) => setEditingDriver({...editingDriver, restDay: e.target.value})}
@@ -62,12 +332,8 @@ const Drivers = ({ drivers, setDrivers, contracts, vehicles }) => {
                   <option value="Dimanche">Dimanche</option>
                 </select>
               </div>
-
               <div className="flex gap-2">
-                <button
-                  type="submit"
-                  className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
-                >
+                <button type="submit" className="flex-1 bg-blue-600 text-white py-2 rounded-lg">
                   Enregistrer
                 </button>
                 <button
@@ -85,7 +351,7 @@ const Drivers = ({ drivers, setDrivers, contracts, vehicles }) => {
 
       {/* Liste des chauffeurs */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {drivers.map(driver => {
+        {validatedDrivers.map(driver => {
           const contract = getDriverContract(driver.id);
           const vehicle = getDriverVehicle(driver.vehicleId);
           const licenseExpiry = new Date(driver.licenseExpiry);
@@ -104,26 +370,29 @@ const Drivers = ({ drivers, setDrivers, contracts, vehicles }) => {
                     <div className="text-5xl">{driver.photo}</div>
                     <div>
                       <h3 className="font-bold text-xl">{driver.name}</h3>
-                      <span className={`px-2 py-1 rounded-full text-xs font-bold ${
-                        driver.status === 'active' 
-                          ? 'bg-green-200 text-green-800' 
-                          : 'bg-gray-200 text-gray-800'
-                      }`}>
-                        {driver.status === 'active' ? '✅ Actif' : '⏸️ Inactif'}
+                      <span className="px-2 py-1 rounded-full text-xs font-bold bg-green-200 text-green-800">
+                        ✅ Actif
                       </span>
                     </div>
                   </div>
-                  <button
-                    onClick={() => setEditingDriver(driver)}
-                    className="text-blue-600 hover:text-blue-800"
-                  >
-                    <Edit size={20} />
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setEditingDriver(driver)}
+                      className="text-blue-600 hover:text-blue-800"
+                    >
+                      <Edit size={20} />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteDriver(driver.id)}
+                      className="text-red-600 hover:text-red-800"
+                    >
+                      <Trash2 size={20} />
+                    </button>
+                  </div>
                 </div>
               </div>
 
               <div className="p-4 space-y-3">
-                {/* Contact */}
                 <div className="grid grid-cols-2 gap-2">
                   <div className="flex items-center gap-2 text-sm">
                     <Phone size={16} className="text-gray-500" />
@@ -135,7 +404,6 @@ const Drivers = ({ drivers, setDrivers, contracts, vehicles }) => {
                   </div>
                 </div>
 
-                {/* Permis */}
                 <div className={`p-3 rounded border ${
                   isLicenseExpired 
                     ? 'bg-red-50 border-red-300' 
@@ -151,11 +419,7 @@ const Drivers = ({ drivers, setDrivers, contracts, vehicles }) => {
                     <div className="text-right">
                       <p className="text-xs text-gray-600">Expiration</p>
                       <p className={`font-bold text-sm ${
-                        isLicenseExpired 
-                          ? 'text-red-600' 
-                          : isLicenseExpiringSoon 
-                          ? 'text-yellow-700' 
-                          : 'text-gray-900'
+                        isLicenseExpired ? 'text-red-600' : isLicenseExpiringSoon ? 'text-yellow-700' : 'text-gray-900'
                       }`}>
                         {new Date(driver.licenseExpiry).toLocaleDateString('fr-FR')}
                       </p>
@@ -173,7 +437,6 @@ const Drivers = ({ drivers, setDrivers, contracts, vehicles }) => {
                   )}
                 </div>
 
-                {/* Véhicule */}
                 {vehicle && (
                   <div className="p-3 bg-green-50 rounded border border-green-200">
                     <p className="text-xs text-green-700">Véhicule attribué</p>
@@ -182,15 +445,12 @@ const Drivers = ({ drivers, setDrivers, contracts, vehicles }) => {
                   </div>
                 )}
 
-                {/* Contrat */}
                 {contract && (
                   <div className="p-3 bg-purple-50 rounded border border-purple-200">
                     <div className="flex justify-between items-center mb-1">
                       <p className="text-xs text-purple-700">Contrat</p>
                       <span className={`px-2 py-1 rounded text-xs font-bold ${
-                        contract.type === 'LAO' 
-                          ? 'bg-blue-200 text-blue-800' 
-                          : 'bg-green-200 text-green-800'
+                        contract.type === 'LAO' ? 'bg-blue-200 text-blue-800' : 'bg-green-200 text-green-800'
                       }`}>
                         {contract.type}
                       </span>
@@ -201,7 +461,6 @@ const Drivers = ({ drivers, setDrivers, contracts, vehicles }) => {
                   </div>
                 )}
 
-                {/* Jour de repos */}
                 <div className="p-3 bg-blue-50 rounded border border-blue-200">
                   <div className="flex justify-between items-center">
                     <div>

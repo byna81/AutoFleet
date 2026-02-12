@@ -1,8 +1,8 @@
-// Maintenance.jsx - Planning de maintenance
+// Maintenance-v2.jsx - Planning maintenance avec Supprimer + Validation Admin
 import React, { useState } from 'react';
-import { Plus, Wrench, AlertTriangle, CheckCircle, Calendar } from 'lucide-react';
+import { Plus, Wrench, AlertTriangle, CheckCircle, Calendar, Trash2, XCircle } from 'lucide-react';
 
-const Maintenance = ({ maintenanceSchedule, setMaintenanceSchedule, vehicles, currentUser }) => {
+const Maintenance = ({ maintenanceSchedule, setMaintenanceSchedule, vehicles, currentUser, hasPermission }) => {
   const [showAddMaintenance, setShowAddMaintenance] = useState(false);
   const [newMaintenance, setNewMaintenance] = useState({
     vehicleId: '',
@@ -14,25 +14,41 @@ const Maintenance = ({ maintenanceSchedule, setMaintenanceSchedule, vehicles, cu
     notes: ''
   });
 
+  const pendingMaintenance = maintenanceSchedule?.filter(m => m.status === 'pending-validation') || [];
+  const scheduledMaintenance = maintenanceSchedule?.filter(m => m.status === 'pending' || !m.status) || [];
+  const completedMaintenance = maintenanceSchedule?.filter(m => m.status === 'completed') || [];
+
   const handleAddMaintenance = (e) => {
     e.preventDefault();
 
     const vehicle = vehicles.find(v => v.id === newMaintenance.vehicleId);
     
     const maintenance = {
-      id: maintenanceSchedule.length + 1,
+      id: (maintenanceSchedule?.length || 0) + 1,
       ...newMaintenance,
       vehicleName: vehicle.brand,
       currentMileage: parseInt(newMaintenance.currentMileage),
       nextMileage: parseInt(newMaintenance.nextMileage),
       estimatedCost: parseFloat(newMaintenance.estimatedCost),
-      status: 'pending',
-      createdBy: currentUser.name,
+      status: hasPermission('all') ? 'pending' : 'pending-validation',
+      createdBy: currentUser.id,
+      createdByName: currentUser.name,
       createdAt: new Date().toISOString()
     };
 
-    setMaintenanceSchedule([...maintenanceSchedule, maintenance]);
-    alert(`✅ Maintenance planifiée!\n\n${vehicle.id} - ${newMaintenance.type}\nDate prévue: ${new Date(newMaintenance.dueDate).toLocaleDateString('fr-FR')}`);
+    if (hasPermission('all')) {
+      maintenance.validatedBy = currentUser.id;
+      maintenance.validatedByName = currentUser.name;
+      maintenance.validatedAt = new Date().toISOString();
+    }
+
+    setMaintenanceSchedule([...(maintenanceSchedule || []), maintenance]);
+    
+    alert(
+      hasPermission('all')
+        ? `✅ Maintenance planifiée!\n${vehicle.id} - ${newMaintenance.type}`
+        : `✅ Maintenance créée!\nEn attente de validation Admin\n${vehicle.id} - ${newMaintenance.type}`
+    );
     
     setShowAddMaintenance(false);
     setNewMaintenance({
@@ -47,12 +63,13 @@ const Maintenance = ({ maintenanceSchedule, setMaintenanceSchedule, vehicles, cu
   };
 
   const handleMarkAsCompleted = (maintenanceId) => {
-    const updated = maintenanceSchedule.map(m => {
+    const updated = (maintenanceSchedule || []).map(m => {
       if (m.id === maintenanceId) {
         return {
           ...m,
           status: 'completed',
-          completedBy: currentUser.name,
+          completedBy: currentUser.id,
+          completedByName: currentUser.name,
           completedAt: new Date().toISOString()
         };
       }
@@ -63,15 +80,64 @@ const Maintenance = ({ maintenanceSchedule, setMaintenanceSchedule, vehicles, cu
     alert('✅ Maintenance marquée comme effectuée');
   };
 
+  const handleDeleteMaintenance = (maintenanceId) => {
+    const maintenance = (maintenanceSchedule || []).find(m => m.id === maintenanceId);
+    if (!maintenance) return;
+
+    if (window.confirm(`Supprimer cette maintenance ?\n${maintenance.vehicleId} - ${maintenance.type}`)) {
+      const updated = (maintenanceSchedule || []).filter(m => m.id !== maintenanceId);
+      setMaintenanceSchedule(updated);
+      alert('✅ Maintenance supprimée');
+    }
+  };
+
+  const handleValidateMaintenance = (maintenanceId) => {
+    const updated = (maintenanceSchedule || []).map(m => {
+      if (m.id === maintenanceId) {
+        return {
+          ...m,
+          status: 'pending',
+          validatedBy: currentUser.id,
+          validatedByName: currentUser.name,
+          validatedAt: new Date().toISOString()
+        };
+      }
+      return m;
+    });
+
+    setMaintenanceSchedule(updated);
+    alert('✅ Maintenance validée');
+  };
+
+  const handleRejectMaintenance = (maintenanceId) => {
+    const reason = window.prompt('Motif du rejet:');
+    if (!reason) return;
+
+    const updated = (maintenanceSchedule || []).map(m => {
+      if (m.id === maintenanceId) {
+        return {
+          ...m,
+          status: 'rejected',
+          rejectedBy: currentUser.id,
+          rejectedByName: currentUser.name,
+          rejectedAt: new Date().toISOString(),
+          rejectionReason: reason
+        };
+      }
+      return m;
+    });
+
+    setMaintenanceSchedule(updated);
+    alert('❌ Maintenance rejetée');
+  };
+
   const getDaysUntilDue = (dueDate) => {
     const due = new Date(dueDate);
     const today = new Date();
     return Math.ceil((due - today) / (1000 * 60 * 60 * 24));
   };
 
-  const pendingMaintenance = maintenanceSchedule.filter(m => m.status === 'pending');
-  const urgentMaintenance = pendingMaintenance.filter(m => getDaysUntilDue(m.dueDate) <= 7);
-  const completedMaintenance = maintenanceSchedule.filter(m => m.status === 'completed');
+  const urgentMaintenance = scheduledMaintenance.filter(m => getDaysUntilDue(m.dueDate) <= 7);
 
   return (
     <div>
@@ -79,7 +145,7 @@ const Maintenance = ({ maintenanceSchedule, setMaintenanceSchedule, vehicles, cu
         <div>
           <h1 className="text-3xl font-bold">🔧 Maintenance des véhicules</h1>
           <p className="text-gray-600 mt-2">
-            {pendingMaintenance.length} maintenance(s) en attente
+            {scheduledMaintenance.length} maintenance(s) en attente
           </p>
         </div>
         <button
@@ -98,7 +164,7 @@ const Maintenance = ({ maintenanceSchedule, setMaintenanceSchedule, vehicles, cu
             <Calendar className="text-yellow-600" size={32} />
             <h3 className="font-bold text-yellow-900">En attente</h3>
           </div>
-          <p className="text-3xl font-bold text-yellow-700">{pendingMaintenance.length}</p>
+          <p className="text-3xl font-bold text-yellow-700">{scheduledMaintenance.length}</p>
         </div>
 
         <div className="bg-red-50 border border-red-200 rounded-xl p-6">
@@ -117,6 +183,46 @@ const Maintenance = ({ maintenanceSchedule, setMaintenanceSchedule, vehicles, cu
           <p className="text-3xl font-bold text-green-700">{completedMaintenance.length}</p>
         </div>
       </div>
+
+      {/* Validations en attente - Admin uniquement */}
+      {hasPermission('all') && pendingMaintenance.length > 0 && (
+        <div className="mb-8 bg-yellow-50 border-2 border-yellow-300 rounded-xl p-6">
+          <h2 className="text-xl font-bold text-yellow-900 mb-4 flex items-center gap-2">
+            <AlertTriangle size={24} />
+            ⚠️ Validations en attente ({pendingMaintenance.length})
+          </h2>
+          <div className="space-y-3">
+            {pendingMaintenance.map(maintenance => (
+              <div key={maintenance.id} className="bg-white p-4 rounded-lg border border-yellow-200">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="font-bold text-lg">{maintenance.vehicleId}</p>
+                    <p className="text-sm text-gray-600">Type: {maintenance.type}</p>
+                    <p className="text-sm text-gray-600">Date prévue: {new Date(maintenance.dueDate).toLocaleDateString('fr-FR')}</p>
+                    <p className="text-sm text-gray-500">Créé par: {maintenance.createdByName}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleValidateMaintenance(maintenance.id)}
+                      className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 flex items-center gap-1"
+                    >
+                      <CheckCircle size={16} />
+                      Valider
+                    </button>
+                    <button
+                      onClick={() => handleRejectMaintenance(maintenance.id)}
+                      className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center gap-1"
+                    >
+                      <XCircle size={16} />
+                      Rejeter
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Modal Ajout */}
       {showAddMaintenance && (
@@ -266,12 +372,20 @@ const Maintenance = ({ maintenanceSchedule, setMaintenanceSchedule, vehicles, cu
                           : `⏰ Dans ${daysUntil} jour(s)`}
                       </p>
                     </div>
-                    <button
-                      onClick={() => handleMarkAsCompleted(maintenance.id)}
-                      className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-                    >
-                      Marquer effectuée
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleMarkAsCompleted(maintenance.id)}
+                        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                      >
+                        Effectuée
+                      </button>
+                      <button
+                        onClick={() => handleDeleteMaintenance(maintenance.id)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <Trash2 size={20} />
+                      </button>
+                    </div>
                   </div>
                 </div>
               );
@@ -280,10 +394,10 @@ const Maintenance = ({ maintenanceSchedule, setMaintenanceSchedule, vehicles, cu
         </div>
       )}
 
-      {/* Liste des maintenances en attente */}
+      {/* Liste des maintenances planifiées */}
       <div className="grid grid-cols-1 gap-6 mb-8">
         <h2 className="text-xl font-bold">📋 Maintenances planifiées</h2>
-        {pendingMaintenance.map(maintenance => {
+        {scheduledMaintenance.map(maintenance => {
           const daysUntil = getDaysUntilDue(maintenance.dueDate);
           const isUrgent = daysUntil <= 7;
           const isOverdue = daysUntil < 0;
@@ -303,13 +417,21 @@ const Maintenance = ({ maintenanceSchedule, setMaintenanceSchedule, vehicles, cu
                     <h3 className="font-bold text-xl">{maintenance.vehicleId}</h3>
                     <p className="text-sm text-gray-600">{maintenance.vehicleName}</p>
                   </div>
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                    maintenance.type === 'Vidange' ? 'bg-blue-200 text-blue-800' :
-                    maintenance.type === 'Révision' ? 'bg-purple-200 text-purple-800' :
-                    'bg-gray-200 text-gray-800'
-                  }`}>
-                    {maintenance.type}
-                  </span>
+                  <div className="flex gap-2 items-start">
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                      maintenance.type === 'Vidange' ? 'bg-blue-200 text-blue-800' :
+                      maintenance.type === 'Révision' ? 'bg-purple-200 text-purple-800' :
+                      'bg-gray-200 text-gray-800'
+                    }`}>
+                      {maintenance.type}
+                    </span>
+                    <button
+                      onClick={() => handleDeleteMaintenance(maintenance.id)}
+                      className="text-red-600 hover:text-red-800"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -376,7 +498,7 @@ const Maintenance = ({ maintenanceSchedule, setMaintenanceSchedule, vehicles, cu
                   <div>
                     <p className="font-bold">{maintenance.vehicleId} - {maintenance.type}</p>
                     <p className="text-sm text-gray-600">
-                      Effectuée le {new Date(maintenance.completedAt).toLocaleDateString('fr-FR')} par {maintenance.completedBy}
+                      Effectuée le {new Date(maintenance.completedAt).toLocaleDateString('fr-FR')} par {maintenance.completedByName}
                     </p>
                   </div>
                   <CheckCircle className="text-green-600" size={24} />
