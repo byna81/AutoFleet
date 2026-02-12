@@ -1,23 +1,8 @@
-// Payments.jsx - Gestion des versements (VERSION CORRIGÉE)
+// Payments.jsx - CORRIGÉ avec date dans historique
 import React, { useState } from 'react';
 import { Plus, History, Edit } from 'lucide-react';
 
-const Payments = ({ payments, setPayments, currentUser }) => {
-  // Données importées depuis le parent (App.jsx)
-  const drivers = [
-    { id: 1, name: 'Mamadou Diallo', photo: '👨🏿', phone: '+221 77 123 4567', contractId: 1, vehicleId: 'DK-123-AB', status: 'active' },
-    { id: 2, name: 'Ibrahima Sarr', photo: '👨🏿‍🦱', phone: '+221 76 234 5678', contractId: 2, vehicleId: 'DK-456-CD', status: 'active' },
-    { id: 3, name: 'Moussa Ndiaye', photo: '👨🏿‍🦲', phone: '+221 78 345 6789', contractId: 3, vehicleId: 'DK-789-EF', status: 'active' },
-    { id: 4, name: 'Cheikh Ba', photo: '👨🏿', phone: '+221 77 456 7890', contractId: 4, vehicleId: 'DK-012-GH', status: 'active' }
-  ];
-
-  const contracts = [
-    { id: 1, driverId: 1, vehicleId: 'DK-123-AB', type: 'LAO', dailyAmount: 15000, status: 'active' },
-    { id: 2, driverId: 2, vehicleId: 'DK-456-CD', type: 'Location', dailyAmount: 12000, status: 'active' },
-    { id: 3, driverId: 3, vehicleId: 'DK-789-EF', type: 'Location', dailyAmount: 10000, status: 'active' },
-    { id: 4, driverId: 4, vehicleId: 'DK-012-GH', type: 'LAO', dailyAmount: 16000, status: 'active' }
-  ];
-
+const Payments = ({ payments, setPayments, currentUser, drivers, contracts }) => {
   const [showAddPayment, setShowAddPayment] = useState(false);
   const [selectedPaymentDriver, setSelectedPaymentDriver] = useState(null);
   const [newPayment, setNewPayment] = useState({
@@ -145,7 +130,7 @@ const Payments = ({ payments, setPayments, currentUser }) => {
         </button>
       </div>
 
-      {/* Modal Ajout */}
+      {/* Modals Ajout et Modification - Identiques à avant */}
       {showAddPayment && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-8 max-w-md w-full">
@@ -215,13 +200,13 @@ const Payments = ({ payments, setPayments, currentUser }) => {
                 />
               </div>
               <div className="flex gap-2">
-                <button type="submit" className="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+                <button type="submit" className="flex-1 bg-green-600 text-white py-2 rounded-lg">
                   Enregistrer
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowAddPayment(false)}
-                  className="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg"
+                  className="flex-1 bg-gray-300 py-2 rounded-lg"
                 >
                   Annuler
                 </button>
@@ -231,7 +216,6 @@ const Payments = ({ payments, setPayments, currentUser }) => {
         </div>
       )}
 
-      {/* Modal Modification */}
       {editingPayment && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-8 max-w-md w-full">
@@ -247,7 +231,6 @@ const Payments = ({ payments, setPayments, currentUser }) => {
                   required
                 />
               </div>
-
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-2">
                   Motif <span className="text-red-500">*</span>
@@ -261,7 +244,6 @@ const Payments = ({ payments, setPayments, currentUser }) => {
                   required
                 />
               </div>
-
               <div className="flex gap-2">
                 <button type="submit" className="flex-1 bg-orange-600 text-white py-2 rounded-lg">
                   Valider
@@ -269,7 +251,7 @@ const Payments = ({ payments, setPayments, currentUser }) => {
                 <button
                   type="button"
                   onClick={() => setEditingPayment(null)}
-                  className="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg"
+                  className="flex-1 bg-gray-300 py-2 rounded-lg"
                 >
                   Annuler
                 </button>
@@ -333,26 +315,65 @@ const Payments = ({ payments, setPayments, currentUser }) => {
         </table>
       </div>
 
-      {/* Modal Historique */}
+      {/* Modal Historique CORRIGÉ avec DATE */}
       {showPaymentHistory && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-8 max-w-2xl w-full">
-            <h2 className="text-2xl font-bold mb-4">Historique</h2>
+          <div className="bg-white rounded-xl p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+            <h2 className="text-2xl font-bold mb-4">📜 Historique</h2>
+            
+            <div className="mb-6 p-4 bg-gray-50 rounded">
+              <p><strong>Par:</strong> {showPaymentHistory.recordedBy}</p>
+              <p><strong>Motif:</strong> {showPaymentHistory.modifications?.[0]?.reason || 'Aucune modification'}</p>
+            </div>
+
             {showPaymentHistory.modifications?.length > 0 ? (
-              <div>
+              <div className="space-y-3">
                 {showPaymentHistory.modifications.map((mod, idx) => (
-                  <div key={idx} className="mb-3 p-3 bg-yellow-50 rounded">
-                    <p><strong>Par:</strong> {mod.modifiedBy}</p>
-                    <p><strong>Motif:</strong> {mod.reason}</p>
+                  <div key={idx} className="border border-yellow-200 bg-yellow-50 rounded p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <p className="font-bold text-yellow-900">Modification #{idx + 1}</p>
+                      <span className="text-xs text-gray-600 font-mono">
+                        {new Date(mod.modifiedAt).toLocaleDateString('fr-FR')} à{' '}
+                        {new Date(mod.modifiedAt).toLocaleTimeString('fr-FR')}
+                      </span>
+                    </div>
+                    
+                    <p className="text-sm text-gray-700 mb-2">
+                      <strong>Par:</strong> {mod.modifiedBy}
+                    </p>
+                    
+                    <div className="p-3 bg-white rounded mb-2">
+                      <p className="text-sm font-bold mb-1">Motif:</p>
+                      <p className="text-sm text-gray-700">{mod.reason}</p>
+                    </div>
+
+                    {Object.keys(mod.changes).length > 0 && (
+                      <div className="p-3 bg-white rounded">
+                        <p className="text-sm font-bold mb-2">Changements:</p>
+                        {mod.changes.amount && (
+                          <p className="text-sm">
+                            <strong>Montant:</strong>{' '}
+                            <span className="text-red-600 line-through">
+                              {mod.changes.amount.old.toLocaleString()} FCFA
+                            </span>
+                            {' → '}
+                            <span className="text-green-600 font-bold">
+                              {mod.changes.amount.new.toLocaleString()} FCFA
+                            </span>
+                          </p>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-gray-500">Aucune modification</p>
+              <p className="text-gray-500 text-center py-8">Aucune modification</p>
             )}
+
             <button
               onClick={() => setShowPaymentHistory(null)}
-              className="mt-4 w-full bg-gray-300 py-2 rounded-lg"
+              className="mt-6 w-full bg-gray-300 py-2 rounded-lg"
             >
               Fermer
             </button>
