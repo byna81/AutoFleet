@@ -1,4 +1,4 @@
-// App.jsx - Application principale COMPLÈTE avec tous les composants
+// App.jsx - Application FINALE avec tous les props corrects
 import React, { useState } from 'react';
 import Login from './components/Login';
 import Sidebar from './components/Sidebar';
@@ -117,14 +117,19 @@ const App = () => {
               setDrivers={setDrivers}
               contracts={contracts}
               vehicles={vehicles}
+              currentUser={currentUser}
+              hasPermission={hasPermission}
             />
           )}
 
           {activeTab === 'contracts' && (
             <Contracts
               contracts={contracts}
+              setContracts={setContracts}
               drivers={drivers}
               vehicles={vehicles}
+              currentUser={currentUser}
+              hasPermission={hasPermission}
             />
           )}
           
@@ -166,6 +171,7 @@ const App = () => {
               setMaintenanceSchedule={setMaintenanceSchedule}
               vehicles={vehicles}
               currentUser={currentUser}
+              hasPermission={hasPermission}
             />
           )}
           
