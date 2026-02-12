@@ -1,8 +1,8 @@
-// Vehicles-v2.jsx - Gestion véhicules avec CRUD + Validation Admin
+// Vehicles.jsx - Gestion véhicules avec CRUD + Validation Admin
 import React, { useState } from 'react';
 import { Plus, Edit, Trash2, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 
-const Vehicles = ({ payments, vehicles, setVehicles, currentUser, hasPermission, managementContracts, contracts }) => {
+const Vehicles = ({ payments, vehicles, setVehicles, currentUser, hasPermission, managementContracts, contracts, setActiveTab }) => {
   const [showAddVehicle, setShowAddVehicle] = useState(false);
   const [editingVehicle, setEditingVehicle] = useState(null);
   const [newVehicle, setNewVehicle] = useState({
@@ -354,6 +354,15 @@ const Vehicles = ({ payments, vehicles, setVehicles, currentUser, hasPermission,
                       <p className="text-sm text-green-700 font-medium mt-1">
                         Propriétaire: {vehicle.ownerName}
                       </p>
+                    )}
+                    {/* Afficher le chauffeur avec lien cliquable */}
+                    {vehicle.driverName && (
+                      <button
+                        onClick={() => setActiveTab('drivers')}
+                        className="text-sm text-blue-700 font-medium mt-1 hover:underline cursor-pointer text-left block"
+                      >
+                        🚗 Chauffeur: {vehicle.driverName}
+                      </button>
                     )}
                   </div>
                   <div className="flex gap-2 items-start">
