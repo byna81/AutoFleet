@@ -1,4 +1,4 @@
-// mockData.js - Données complètes AutoFleet v2
+// mockData.js - Données complètes AutoFleet v2 (EXPORTS CORRIGÉS)
 
 export const users = [
   { 
@@ -25,7 +25,7 @@ export const users = [
   }
 ];
 
-export const initialDrivers = [
+export const drivers = [
   { 
     id: 1, 
     name: 'Mamadou Diallo', 
@@ -88,7 +88,7 @@ export const initialDrivers = [
   }
 ];
 
-export const initialVehicles = [
+export const vehicles = [
   { 
     id: 'DK-123-AB', 
     brand: 'Toyota Corolla', 
@@ -141,7 +141,7 @@ export const initialVehicles = [
   }
 ];
 
-export const initialContracts = [
+export const contracts = [
   { 
     id: 1, 
     driverId: 1,
@@ -200,7 +200,7 @@ export const initialContracts = [
   }
 ];
 
-export const initialManagementContracts = [
+export const managementContracts = [
   { 
     id: 1, 
     vehicleId: 'DK-789-EF', 
@@ -243,7 +243,7 @@ export const initialPayments = [
   { id: 5, driverId: 4, contractId: 4, date: '2025-02-10', amount: 16000, status: 'paid', time: '18:00', recordedBy: 'Fatou Diop', recordedById: 2, recordedAt: '2025-02-10T18:00:00', modifications: [] }
 ];
 
-export const initialMaintenanceSchedule = [
+export const maintenanceSchedule = [
   {
     id: 1,
     vehicleId: 'DK-123-AB',
