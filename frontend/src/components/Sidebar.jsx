@@ -1,4 +1,4 @@
-// Sidebar.jsx - Menu latéral
+// Sidebar.jsx - Menu latéral avec onglet Paiements Propriétaires
 import React from 'react';
 import { LogOut } from 'lucide-react';
 
@@ -35,6 +35,9 @@ const Sidebar = ({ currentUser, activeTab, setActiveTab, handleLogout, hasPermis
         </button>
         <button onClick={() => setActiveTab('owners')} className={`w-full text-left p-3 rounded ${activeTab === 'owners' ? 'bg-red-800' : 'hover:bg-red-800'}`}>
           🏢 Propriétaires
+        </button>
+        <button onClick={() => setActiveTab('owner-payments')} className={`w-full text-left p-3 rounded ${activeTab === 'owner-payments' ? 'bg-red-800' : 'hover:bg-red-800'}`}>
+          💵 Paiements propriétaires
         </button>
         {hasPermission('all') && (
           <button onClick={() => setActiveTab('users')} className={`w-full text-left p-3 rounded border-t border-red-500 mt-4 pt-4 ${activeTab === 'users' ? 'bg-red-800' : 'hover:bg-red-800'}`}>
