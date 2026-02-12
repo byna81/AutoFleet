@@ -1,4 +1,4 @@
-// Sidebar.jsx - Menu latéral avec onglet Paiements Propriétaires
+// Sidebar.jsx - Menu latéral COMPLET avec tous les onglets
 import React from 'react';
 import { LogOut } from 'lucide-react';
 
@@ -24,23 +24,67 @@ const Sidebar = ({ currentUser, activeTab, setActiveTab, handleLogout, hasPermis
       </div>
 
       <nav className="space-y-2 flex-1">
-        <button onClick={() => setActiveTab('dashboard')} className={`w-full text-left p-3 rounded ${activeTab === 'dashboard' ? 'bg-red-800' : 'hover:bg-red-800'}`}>
+        <button 
+          onClick={() => setActiveTab('dashboard')} 
+          className={`w-full text-left p-3 rounded ${activeTab === 'dashboard' ? 'bg-red-800' : 'hover:bg-red-800'}`}
+        >
           📊 Tableau de bord
         </button>
-        <button onClick={() => setActiveTab('payments')} className={`w-full text-left p-3 rounded ${activeTab === 'payments' ? 'bg-red-800' : 'hover:bg-red-800'}`}>
+
+        <button 
+          onClick={() => setActiveTab('payments')} 
+          className={`w-full text-left p-3 rounded ${activeTab === 'payments' ? 'bg-red-800' : 'hover:bg-red-800'}`}
+        >
           💰 Versements
         </button>
-        <button onClick={() => setActiveTab('vehicles')} className={`w-full text-left p-3 rounded ${activeTab === 'vehicles' ? 'bg-red-800' : 'hover:bg-red-800'}`}>
+
+        <button 
+          onClick={() => setActiveTab('drivers')} 
+          className={`w-full text-left p-3 rounded ${activeTab === 'drivers' ? 'bg-red-800' : 'hover:bg-red-800'}`}
+        >
+          👨‍✈️ Chauffeurs
+        </button>
+
+        <button 
+          onClick={() => setActiveTab('contracts')} 
+          className={`w-full text-left p-3 rounded ${activeTab === 'contracts' ? 'bg-red-800' : 'hover:bg-red-800'}`}
+        >
+          📋 Contrats
+        </button>
+
+        <button 
+          onClick={() => setActiveTab('vehicles')} 
+          className={`w-full text-left p-3 rounded ${activeTab === 'vehicles' ? 'bg-red-800' : 'hover:bg-red-800'}`}
+        >
           🚗 Véhicules
         </button>
-        <button onClick={() => setActiveTab('owners')} className={`w-full text-left p-3 rounded ${activeTab === 'owners' ? 'bg-red-800' : 'hover:bg-red-800'}`}>
+
+        <button 
+          onClick={() => setActiveTab('owners')} 
+          className={`w-full text-left p-3 rounded ${activeTab === 'owners' ? 'bg-red-800' : 'hover:bg-red-800'}`}
+        >
           🏢 Propriétaires
         </button>
-        <button onClick={() => setActiveTab('owner-payments')} className={`w-full text-left p-3 rounded ${activeTab === 'owner-payments' ? 'bg-red-800' : 'hover:bg-red-800'}`}>
+
+        <button 
+          onClick={() => setActiveTab('owner-payments')} 
+          className={`w-full text-left p-3 rounded ${activeTab === 'owner-payments' ? 'bg-red-800' : 'hover:bg-red-800'}`}
+        >
           💵 Paiements propriétaires
         </button>
+
+        <button 
+          onClick={() => setActiveTab('maintenance')} 
+          className={`w-full text-left p-3 rounded ${activeTab === 'maintenance' ? 'bg-red-800' : 'hover:bg-red-800'}`}
+        >
+          🔧 Maintenance
+        </button>
+
         {hasPermission('all') && (
-          <button onClick={() => setActiveTab('users')} className={`w-full text-left p-3 rounded border-t border-red-500 mt-4 pt-4 ${activeTab === 'users' ? 'bg-red-800' : 'hover:bg-red-800'}`}>
+          <button 
+            onClick={() => setActiveTab('users')} 
+            className={`w-full text-left p-3 rounded border-t border-red-500 mt-4 pt-4 ${activeTab === 'users' ? 'bg-red-800' : 'hover:bg-red-800'}`}
+          >
             👤 Utilisateurs
           </button>
         )}
