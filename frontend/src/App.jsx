@@ -1,4 +1,4 @@
-// App.jsx - Application principale avec OwnerPayments
+// App.jsx - Application principale CORRIGÉE avec tous les props
 import React, { useState } from 'react';
 import Login from './components/Login';
 import Sidebar from './components/Sidebar';
@@ -8,7 +8,7 @@ import Vehicles from './components/Vehicles';
 import Owners from './components/Owners';
 import Users from './components/Users';
 import OwnerPayments from './components/OwnerPayments';
-import { users as initialUsers, initialPayments, initialOwnerPayments, managementContracts, contracts } from './data/mockData';
+import { users as initialUsers, initialPayments, initialOwnerPayments, managementContracts as initialManagementContracts, contracts, vehicles as initialVehicles } from './data/mockData';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -19,6 +19,8 @@ const App = () => {
   const [allUsers, setAllUsers] = useState(initialUsers);
   const [payments, setPayments] = useState(initialPayments);
   const [ownerPayments, setOwnerPayments] = useState(initialOwnerPayments);
+  const [managementContracts, setManagementContracts] = useState(initialManagementContracts);
+  const [vehicles, setVehicles] = useState(initialVehicles);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -83,6 +85,7 @@ const App = () => {
 
           {/* Content */}
           {activeTab === 'dashboard' && <Dashboard payments={payments} />}
+          
           {activeTab === 'payments' && (
             <Payments
               payments={payments}
@@ -90,8 +93,28 @@ const App = () => {
               currentUser={currentUser}
             />
           )}
-          {activeTab === 'vehicles' && <Vehicles payments={payments} />}
-          {activeTab === 'owners' && <Owners />}
+          
+          {activeTab === 'vehicles' && (
+            <Vehicles
+              payments={payments}
+              vehicles={vehicles}
+              setVehicles={setVehicles}
+              currentUser={currentUser}
+              hasPermission={hasPermission}
+              managementContracts={managementContracts}
+              contracts={contracts}
+            />
+          )}
+          
+          {activeTab === 'owners' && (
+            <Owners
+              managementContracts={managementContracts}
+              setManagementContracts={setManagementContracts}
+              currentUser={currentUser}
+              hasPermission={hasPermission}
+            />
+          )}
+          
           {activeTab === 'owner-payments' && (
             <OwnerPayments
               payments={payments}
@@ -102,6 +125,7 @@ const App = () => {
               contracts={contracts}
             />
           )}
+          
           {activeTab === 'users' && hasPermission('all') && (
             <Users
               allUsers={allUsers}
