@@ -1,4 +1,4 @@
-// Vehicles.jsx - Gestion véhicules avec CRUD + Validation Admin
+// Vehicles-v2.jsx - Gestion véhicules avec CRUD + Validation Admin
 import React, { useState } from 'react';
 import { Plus, Edit, Trash2, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 
@@ -392,6 +392,17 @@ const Vehicles = ({ payments, vehicles, setVehicles, currentUser, hasPermission,
               </div>
 
               <div className="p-4">
+                {/* Bouton Maintenance - NOUVEAU */}
+                <button
+                  onClick={() => {
+                    localStorage.setItem('selectedVehicleId', vehicle.id);
+                    setActiveTab('maintenance');
+                  }}
+                  className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2 mb-4 font-medium"
+                >
+                  🔧 Voir la maintenance de ce véhicule
+                </button>
+
                 <h4 className="font-bold text-sm text-gray-700 mb-3">💰 Février 2025</h4>
                 <div className="space-y-2">
                   <div className="flex justify-between p-2 bg-gray-50 rounded">
