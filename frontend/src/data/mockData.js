@@ -1,4 +1,4 @@
-// mockData.js - Toutes les données AutoFleet v2
+// mockData.js - Toutes les données AutoFleet v2 (Version complète)
 
 export const users = [
   { 
@@ -47,8 +47,22 @@ export const contracts = [
 ];
 
 export const managementContracts = [
-  { id: 1, vehicleId: 'DK-789-EF', ownerName: 'Ousmane Fall', driverDailyPayment: 10000, ownerDailyShare: 8000, companyDailyShare: 2000 },
-  { id: 2, vehicleId: 'DK-012-GH', ownerName: 'Awa Diagne', driverDailyPayment: 16000, ownerDailyShare: 14000, companyDailyShare: 2000 }
+  { 
+    id: 1, 
+    vehicleId: 'DK-789-EF', 
+    ownerName: 'Ousmane Fall', 
+    driverDailyPayment: 10000, 
+    ownerDailyShare: 8000, 
+    companyDailyShare: 2000 
+  },
+  { 
+    id: 2, 
+    vehicleId: 'DK-012-GH', 
+    ownerName: 'Awa Diagne', 
+    driverDailyPayment: 16000, 
+    ownerDailyShare: 14000, 
+    companyDailyShare: 2000 
+  }
 ];
 
 export const initialPayments = [
@@ -58,3 +72,6 @@ export const initialPayments = [
   { id: 4, driverId: 3, contractId: 3, date: '2025-02-10', amount: 10000, status: 'paid', time: '19:00', recordedBy: 'Fatou Diop', recordedById: 2, recordedAt: '2025-02-10T19:00:00', modifications: [] },
   { id: 5, driverId: 4, contractId: 4, date: '2025-02-10', amount: 16000, status: 'paid', time: '18:00', recordedBy: 'Fatou Diop', recordedById: 2, recordedAt: '2025-02-10T18:00:00', modifications: [] }
 ];
+
+// Liste vide au début - les paiements seront calculés automatiquement
+export const initialOwnerPayments = [];
