@@ -1,11 +1,11 @@
-// Sidebar.jsx - Menu latéral COMPLET avec tous les onglets
+// Sidebar.jsx - Menu latéral SANS barre jaune
 import React from 'react';
 import { LogOut } from 'lucide-react';
 
 const Sidebar = ({ currentUser, activeTab, setActiveTab, handleLogout, hasPermission }) => {
   return (
-    <div className="w-64 bg-gradient-to-b from-red-600 to-red-700 text-white p-4 flex flex-col">
-      <div className="mb-8 text-center pb-4 border-b border-red-500">
+    <div className="w-64 bg-gradient-to-b from-red-600 to-red-700 text-white flex flex-col h-screen">
+      <div className="p-4 border-b border-red-500">
         <h1 className="text-2xl font-bold mb-1">
           <span className="text-red-200">Auto</span><span className="text-white">Fleet</span>
         </h1>
@@ -13,7 +13,7 @@ const Sidebar = ({ currentUser, activeTab, setActiveTab, handleLogout, hasPermis
         <p className="text-blue-200 text-xs italic font-medium">des chauffeurs</p>
       </div>
 
-      <div className="mb-6 p-3 bg-red-800 rounded-lg">
+      <div className="p-4 bg-red-800 mx-4 mt-4 rounded-lg">
         <div className="flex items-center gap-3">
           <div className="text-3xl">{currentUser.avatar}</div>
           <div>
@@ -23,7 +23,7 @@ const Sidebar = ({ currentUser, activeTab, setActiveTab, handleLogout, hasPermis
         </div>
       </div>
 
-      <nav className="space-y-2 flex-1">
+      <nav className="flex-1 overflow-y-auto p-4 space-y-2">
         <button 
           onClick={() => setActiveTab('dashboard')} 
           className={`w-full text-left p-3 rounded ${activeTab === 'dashboard' ? 'bg-red-800' : 'hover:bg-red-800'}`}
@@ -90,13 +90,15 @@ const Sidebar = ({ currentUser, activeTab, setActiveTab, handleLogout, hasPermis
         )}
       </nav>
 
-      <button
-        onClick={handleLogout}
-        className="w-full p-3 bg-red-900 hover:bg-red-950 rounded-lg flex items-center justify-center gap-2 mt-4"
-      >
-        <LogOut size={20} />
-        Déconnexion
-      </button>
+      <div className="p-4 border-t border-red-500">
+        <button
+          onClick={handleLogout}
+          className="w-full p-3 bg-red-900 hover:bg-red-950 rounded-lg flex items-center justify-center gap-2"
+        >
+          <LogOut size={20} />
+          Déconnexion
+        </button>
+      </div>
     </div>
   );
 };
