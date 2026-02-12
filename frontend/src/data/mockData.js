@@ -1,4 +1,4 @@
-// mockData.js - Toutes les données AutoFleet v2 (Version complète)
+// mockData.js - Données complètes AutoFleet v2
 
 export const users = [
   { 
@@ -25,35 +25,197 @@ export const users = [
   }
 ];
 
-export const drivers = [
-  { id: 1, name: 'Mamadou Diallo', phone: '+221 77 123 4567', contractId: 1, vehicleId: 'DK-123-AB' },
-  { id: 2, name: 'Ibrahima Sarr', phone: '+221 76 234 5678', contractId: 2, vehicleId: 'DK-456-CD' },
-  { id: 3, name: 'Moussa Ndiaye', phone: '+221 78 345 6789', contractId: 3, vehicleId: 'DK-789-EF' },
-  { id: 4, name: 'Cheikh Ba', phone: '+221 77 456 7890', contractId: 4, vehicleId: 'DK-012-GH' }
+export const initialDrivers = [
+  { 
+    id: 1, 
+    name: 'Mamadou Diallo', 
+    photo: '👨🏿',
+    phone: '+221 77 123 4567',
+    email: 'mamadou.diallo@email.com',
+    address: 'Plateau, Dakar',
+    licenseNumber: 'B123456',
+    licenseExpiry: '2025-08-15',
+    cin: '1234567890123',
+    contractId: 1,
+    vehicleId: 'DK-123-AB',
+    restDay: 'Lundi',
+    status: 'active'
+  },
+  { 
+    id: 2, 
+    name: 'Ibrahima Sarr',
+    photo: '👨🏿‍🦱',
+    phone: '+221 76 234 5678',
+    email: 'ibrahima.sarr@email.com',
+    address: 'Almadies, Dakar',
+    licenseNumber: 'B234567',
+    licenseExpiry: '2025-06-20',
+    cin: '2345678901234',
+    contractId: 2,
+    vehicleId: 'DK-456-CD',
+    restDay: 'Dimanche',
+    status: 'active'
+  },
+  { 
+    id: 3, 
+    name: 'Moussa Ndiaye',
+    photo: '👨🏿‍🦲',
+    phone: '+221 78 345 6789',
+    email: 'moussa.ndiaye@email.com',
+    address: 'Médina, Dakar',
+    licenseNumber: 'B345678',
+    licenseExpiry: '2025-03-10',
+    cin: '3456789012345',
+    contractId: 3,
+    vehicleId: 'DK-789-EF',
+    restDay: 'Mardi',
+    status: 'active'
+  },
+  { 
+    id: 4, 
+    name: 'Cheikh Ba',
+    photo: '👨🏿',
+    phone: '+221 77 456 7890',
+    email: 'cheikh.ba@email.com',
+    address: 'Ouakam, Dakar',
+    licenseNumber: 'B456789',
+    licenseExpiry: '2026-01-30',
+    cin: '4567890123456',
+    contractId: 4,
+    vehicleId: 'DK-012-GH',
+    restDay: 'Mercredi',
+    status: 'active'
+  }
 ];
 
-export const vehicles = [
-  { id: 'DK-123-AB', brand: 'Toyota Corolla', year: 2020, ownershipType: 'Société' },
-  { id: 'DK-456-CD', brand: 'Hyundai Accent', year: 2019, ownershipType: 'Société' },
-  { id: 'DK-789-EF', brand: 'Renault Symbol', year: 2021, ownershipType: 'Particulier', ownerName: 'Ousmane Fall' },
-  { id: 'DK-012-GH', brand: 'Kia Picanto', year: 2022, ownershipType: 'Particulier', ownerName: 'Awa Diagne' }
+export const initialVehicles = [
+  { 
+    id: 'DK-123-AB', 
+    brand: 'Toyota Corolla', 
+    year: 2020,
+    color: 'Blanc',
+    chassisNumber: 'JT2AE09A0N0123456',
+    mileage: 145000,
+    ownershipType: 'Société',
+    driverId: 1,
+    driverName: 'Mamadou Diallo',
+    status: 'validated'
+  },
+  { 
+    id: 'DK-456-CD', 
+    brand: 'Hyundai Accent', 
+    year: 2019,
+    color: 'Gris',
+    chassisNumber: 'KMHCT41BABZ123456',
+    mileage: 178000,
+    ownershipType: 'Société',
+    driverId: 2,
+    driverName: 'Ibrahima Sarr',
+    status: 'validated'
+  },
+  { 
+    id: 'DK-789-EF', 
+    brand: 'Renault Symbol', 
+    year: 2021,
+    color: 'Noir',
+    chassisNumber: 'VF1LB0B0H56123456',
+    mileage: 98000,
+    ownershipType: 'Particulier',
+    ownerName: 'Ousmane Fall',
+    driverId: 3,
+    driverName: 'Moussa Ndiaye',
+    status: 'validated'
+  },
+  { 
+    id: 'DK-012-GH', 
+    brand: 'Kia Picanto', 
+    year: 2022,
+    color: 'Rouge',
+    chassisNumber: 'KNAPC411CC6123456',
+    mileage: 67000,
+    ownershipType: 'Particulier',
+    ownerName: 'Awa Diagne',
+    driverId: 4,
+    driverName: 'Cheikh Ba',
+    status: 'validated'
+  }
 ];
 
-export const contracts = [
-  { id: 1, driverId: 1, vehicleId: 'DK-123-AB', type: 'LAO', dailyAmount: 15000 },
-  { id: 2, driverId: 2, vehicleId: 'DK-456-CD', type: 'Location', dailyAmount: 12000 },
-  { id: 3, driverId: 3, vehicleId: 'DK-789-EF', type: 'Location', dailyAmount: 10000 },
-  { id: 4, driverId: 4, vehicleId: 'DK-012-GH', type: 'LAO', dailyAmount: 16000 }
+export const initialContracts = [
+  { 
+    id: 1, 
+    driverId: 1,
+    driverName: 'Mamadou Diallo',
+    vehicleId: 'DK-123-AB',
+    type: 'LAO',
+    startDate: '2024-01-15',
+    endDate: '2026-01-15',
+    dailyAmount: 15000,
+    deposit: 500000,
+    totalAmount: 10950000,
+    restDay: 'Lundi',
+    status: 'active'
+  },
+  { 
+    id: 2, 
+    driverId: 2,
+    driverName: 'Ibrahima Sarr',
+    vehicleId: 'DK-456-CD',
+    type: 'Location',
+    startDate: '2024-02-20',
+    endDate: '2025-02-20',
+    dailyAmount: 12000,
+    deposit: 300000,
+    totalAmount: 4380000,
+    restDay: 'Dimanche',
+    status: 'active'
+  },
+  { 
+    id: 3, 
+    driverId: 3,
+    driverName: 'Moussa Ndiaye',
+    vehicleId: 'DK-789-EF',
+    type: 'Location',
+    startDate: '2023-11-10',
+    endDate: '2024-11-10',
+    dailyAmount: 10000,
+    deposit: 250000,
+    totalAmount: 3650000,
+    restDay: 'Mardi',
+    status: 'active'
+  },
+  { 
+    id: 4, 
+    driverId: 4,
+    driverName: 'Cheikh Ba',
+    vehicleId: 'DK-012-GH',
+    type: 'LAO',
+    startDate: '2024-03-05',
+    endDate: '2026-03-05',
+    dailyAmount: 16000,
+    deposit: 600000,
+    totalAmount: 11680000,
+    restDay: 'Mercredi',
+    status: 'active'
+  }
 ];
 
-export const managementContracts = [
+export const initialManagementContracts = [
   { 
     id: 1, 
     vehicleId: 'DK-789-EF', 
     ownerName: 'Ousmane Fall', 
     driverDailyPayment: 10000, 
     ownerDailyShare: 8000, 
-    companyDailyShare: 2000 
+    companyDailyShare: 2000,
+    startDate: '2024-01-01',
+    status: 'validated',
+    createdBy: 2,
+    createdByName: 'Fatou Diop',
+    createdAt: '2024-01-01T10:00:00',
+    validatedBy: 1,
+    validatedByName: 'Amadou Seck',
+    validatedAt: '2024-01-01T14:00:00'
   },
   { 
     id: 2, 
@@ -61,7 +223,15 @@ export const managementContracts = [
     ownerName: 'Awa Diagne', 
     driverDailyPayment: 16000, 
     ownerDailyShare: 14000, 
-    companyDailyShare: 2000 
+    companyDailyShare: 2000,
+    startDate: '2024-03-01',
+    status: 'validated',
+    createdBy: 2,
+    createdByName: 'Fatou Diop',
+    createdAt: '2024-03-01T10:00:00',
+    validatedBy: 1,
+    validatedByName: 'Amadou Seck',
+    validatedAt: '2024-03-01T14:00:00'
   }
 ];
 
@@ -73,5 +243,31 @@ export const initialPayments = [
   { id: 5, driverId: 4, contractId: 4, date: '2025-02-10', amount: 16000, status: 'paid', time: '18:00', recordedBy: 'Fatou Diop', recordedById: 2, recordedAt: '2025-02-10T18:00:00', modifications: [] }
 ];
 
-// Liste vide au début - les paiements seront calculés automatiquement
+export const initialMaintenanceSchedule = [
+  {
+    id: 1,
+    vehicleId: 'DK-123-AB',
+    vehicleName: 'Toyota Corolla',
+    type: 'Vidange',
+    currentMileage: 145000,
+    nextMileage: 150000,
+    dueDate: '2025-03-15',
+    status: 'pending',
+    estimatedCost: 35000,
+    notes: 'Vidange moteur + filtre à huile'
+  },
+  {
+    id: 2,
+    vehicleId: 'DK-456-CD',
+    vehicleName: 'Hyundai Accent',
+    type: 'Révision',
+    currentMileage: 178000,
+    nextMileage: 180000,
+    dueDate: '2025-02-20',
+    status: 'urgent',
+    estimatedCost: 75000,
+    notes: 'Révision générale + freins'
+  }
+];
+
 export const initialOwnerPayments = [];
