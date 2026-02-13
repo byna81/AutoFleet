@@ -152,6 +152,7 @@ const App = () => {
               setManagementContracts={setManagementContracts}
               currentUser={currentUser}
               hasPermission={hasPermission}
+              setActiveTab={setActiveTab}
             />
           )}
           
