@@ -1,5 +1,6 @@
-// App.jsx - Application FINALE avec tous les props corrects
-import React, { useState } from 'react';
+// App.jsx - Application AVEC SUPABASE
+import React, { useState, useEffect } from 'react';
+import { supabase } from './lib/supabaseClient';
 import Login from './components/Login';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
@@ -13,16 +14,6 @@ import OwnerPayments from './components/OwnerPayments';
 import Maintenance from './components/Maintenance';
 import ChangePassword from './components/ChangePassword';
 import ForgotPassword from './components/ForgotPassword';
-import { 
-  users as initialUsers, 
-  initialPayments, 
-  initialOwnerPayments, 
-  managementContracts as initialManagementContracts, 
-  contracts as initialContracts,
-  drivers as initialDrivers,
-  vehicles as initialVehicles,
-  maintenanceSchedule as initialMaintenanceSchedule
-} from './data/mockData';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -30,16 +21,60 @@ const App = () => {
   const [loginForm, setLoginForm] = useState({ username: '', password: '' });
   const [loginError, setLoginError] = useState('');
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [allUsers, setAllUsers] = useState(initialUsers);
-  const [payments, setPayments] = useState(initialPayments);
-  const [ownerPayments, setOwnerPayments] = useState(initialOwnerPayments);
-  const [managementContracts, setManagementContracts] = useState(initialManagementContracts);
-  const [vehicles, setVehicles] = useState(initialVehicles);
-  const [drivers, setDrivers] = useState(initialDrivers);
-  const [contracts, setContracts] = useState(initialContracts);
-  const [maintenanceSchedule, setMaintenanceSchedule] = useState(initialMaintenanceSchedule);
+  
+  // États vides - chargés depuis Supabase
+  const [allUsers, setAllUsers] = useState([]);
+  const [payments, setPayments] = useState([]);
+  const [ownerPayments, setOwnerPayments] = useState([]);
+  const [managementContracts, setManagementContracts] = useState([]);
+  const [vehicles, setVehicles] = useState([]);
+  const [drivers, setDrivers] = useState([]);
+  const [contracts, setContracts] = useState([]);
+  const [maintenanceSchedule, setMaintenanceSchedule] = useState([]);
+  
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Charger données au démarrage
+  useEffect(() => {
+    loadAllData();
+  }, []);
+
+  const loadAllData = async () => {
+    try {
+      setIsLoading(true);
+      
+      const { data: usersData } = await supabase.from('users').select('*');
+      if (usersData) setAllUsers(usersData);
+
+      const { data: driversData } = await supabase.from('drivers').select('*');
+      if (driversData) setDrivers(driversData);
+
+      const { data: vehiclesData } = await supabase.from('vehicles').select('*');
+      if (vehiclesData) setVehicles(vehiclesData);
+
+      const { data: contractsData } = await supabase.from('contracts').select('*');
+      if (contractsData) setContracts(contractsData);
+
+      const { data: mgmtData } = await supabase.from('management_contracts').select('*');
+      if (mgmtData) setManagementContracts(mgmtData);
+
+      const { data: paymentsData } = await supabase.from('payments').select('*');
+      if (paymentsData) setPayments(paymentsData);
+
+      const { data: ownerPayData } = await supabase.from('owner_payments').select('*');
+      if (ownerPayData) setOwnerPayments(ownerPayData);
+
+      const { data: maintenanceData } = await supabase.from('maintenance_schedule').select('*');
+      if (maintenanceData) setMaintenanceSchedule(maintenanceData);
+
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Erreur:', error);
+      setIsLoading(false);
+    }
+  };
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -50,13 +85,14 @@ const App = () => {
       setIsLoggedIn(true);
       setLoginError('');
     } else {
-      setLoginError('Identifiants invalides');
+      setLoginError('Identifiants incorrects');
     }
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
     setCurrentUser(null);
+    setLoginForm({ username: '', password: '' });
     setActiveTab('dashboard');
   };
 
@@ -64,6 +100,18 @@ const App = () => {
     if (!currentUser) return false;
     return currentUser.permissions.includes('all') || currentUser.permissions.includes(permission);
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4">🚗</div>
+          <h2 className="text-2xl font-bold mb-2">AutoFleet</h2>
+          <p className="text-gray-600">Chargement des données...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!isLoggedIn) {
     if (showForgotPassword) {
@@ -109,21 +157,6 @@ const App = () => {
         )}
         
         <div className="p-8">
-          {/* Header */}
-          <div className="mb-8 bg-gradient-to-r from-red-600 to-red-700 rounded-2xl p-6 text-white shadow-xl">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-4xl font-bold mb-2">
-                  <span className="text-red-200">Auto</span><span className="text-white">Fleet</span>
-                </h1>
-                <p className="text-blue-200 text-lg italic font-medium">La gestion intelligente des chauffeurs</p>
-                <p className="text-red-100 text-sm mt-1">🇸🇳 Sénégal</p>
-              </div>
-              <div className="text-6xl">🚗</div>
-            </div>
-          </div>
-
-          {/* Content */}
           {activeTab === 'dashboard' && (
             <Dashboard 
               payments={payments}
@@ -169,7 +202,7 @@ const App = () => {
               hasPermission={hasPermission}
             />
           )}
-          
+
           {activeTab === 'vehicles' && (
             <Vehicles
               payments={payments}
@@ -201,6 +234,7 @@ const App = () => {
               currentUser={currentUser}
               managementContracts={managementContracts}
               contracts={contracts}
+              vehicles={vehicles}
             />
           )}
 
@@ -213,7 +247,7 @@ const App = () => {
               hasPermission={hasPermission}
             />
           )}
-          
+
           {activeTab === 'users' && hasPermission('all') && (
             <Users
               allUsers={allUsers}
