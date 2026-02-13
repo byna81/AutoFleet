@@ -69,10 +69,6 @@ const Login = ({ loginForm, setLoginForm, handleLogin, loginError, onForgotPassw
             </button>
           )}
         </form>
-
-        <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-          <p className="text-xs text-gray-600 text-center mb-2">Comptes de test :</p>
-        </div>
       </div>
     </div>
   );
