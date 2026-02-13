@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Plus, Edit, Trash2, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 
-const Owners = ({ managementContracts, setManagementContracts, currentUser, hasPermission }) => {
+const Owners = ({ managementContracts, setManagementContracts, currentUser, hasPermission, setActiveTab }) => {
   const [showAddContract, setShowAddContract] = useState(false);
   const [editingContract, setEditingContract] = useState(null);
   const [newContract, setNewContract] = useState({
@@ -367,6 +367,17 @@ const Owners = ({ managementContracts, setManagementContracts, currentUser, hasP
                 </div>
               </div>
             </div>
+
+            {/* Bouton Paiements - NOUVEAU */}
+            <button
+              onClick={() => {
+                localStorage.setItem('selectedOwnerId', contract.id);
+                setActiveTab('owner-payments');
+              }}
+              className="mt-4 w-full bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 flex items-center justify-center gap-2 font-medium"
+            >
+              💵 Voir les paiements de ce propriétaire
+            </button>
           </div>
         ))}
       </div>
