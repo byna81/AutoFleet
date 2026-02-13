@@ -1,71 +1,82 @@
-// Login.jsx - Page de connexion
+// Login.jsx - Page de connexion avec mot de passe oublié
 import React from 'react';
 import { User, Lock } from 'lucide-react';
 
-const Login = ({ loginForm, setLoginForm, handleLogin, loginError }) => {
+const Login = ({ loginForm, setLoginForm, handleLogin, loginError, onForgotPassword }) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-600 via-red-700 to-red-800 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
-        <div className="bg-gradient-to-r from-red-600 to-red-700 p-8 text-white text-center rounded-t-2xl">
-          <div className="mb-4">
-            <div className="text-6xl font-bold mb-2">
-              <span className="text-red-200">Auto</span><span className="text-white">Fleet</span>
-            </div>
-          </div>
-          <p className="text-blue-200 text-lg italic font-medium">La gestion intelligente des chauffeurs</p>
-          <p className="text-red-100 text-sm mt-2">Sénégal 🇸🇳</p>
+    <div className="min-h-screen bg-gradient-to-br from-red-600 to-red-800 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full">
+        <div className="text-center mb-8">
+          <div className="text-6xl mb-4">🚗</div>
+          <h1 className="text-4xl font-bold mb-2">
+            <span className="text-red-600">Auto</span><span className="text-gray-900">Fleet</span>
+          </h1>
+          <p className="text-blue-600 italic font-medium">La gestion intelligente des chauffeurs</p>
+          <p className="text-gray-600 text-sm mt-2">🇸🇳 Sénégal</p>
         </div>
-        
-        <form onSubmit={handleLogin} className="p-8">
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <User className="inline mr-2" size={18} />
-              Nom d'utilisateur
-            </label>
-            <input
-              type="text"
-              value={loginForm.username}
-              onChange={(e) => setLoginForm({...loginForm, username: e.target.value})}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-              placeholder="admin ou fatou"
-              required
-            />
+
+        {loginError && (
+          <div className="bg-red-50 border border-red-200 text-red-800 p-3 rounded-lg mb-4 text-center">
+            {loginError}
           </div>
-          
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Lock className="inline mr-2" size={18} />
-              Mot de passe
-            </label>
-            <input
-              type="password"
-              value={loginForm.password}
-              onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-              placeholder="••••••••"
-              required
-            />
+        )}
+
+        <form onSubmit={handleLogin} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Nom d'utilisateur</label>
+            <div className="relative">
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+              <input
+                type="text"
+                value={loginForm.username}
+                onChange={(e) => setLoginForm({...loginForm, username: e.target.value})}
+                placeholder="Entrez votre nom d'utilisateur"
+                className="w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                required
+              />
+            </div>
           </div>
 
-          {loginError && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-              {loginError}
+          <div>
+            <label className="block text-sm font-medium mb-2">Mot de passe</label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+              <input
+                type="password"
+                value={loginForm.password}
+                onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+                placeholder="Entrez votre mot de passe"
+                className="w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                required
+              />
             </div>
-          )}
+          </div>
 
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white py-3 rounded-lg font-semibold hover:from-red-700 hover:to-red-800 transition duration-200"
+            className="w-full bg-red-600 text-white py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors"
           >
             Se connecter
           </button>
 
-          <div className="mt-6 text-center text-sm text-gray-600">
-            <p className="mb-2">Comptes de démonstration:</p>
-            <p className="font-mono">admin / admin123</p>
-            <p className="font-mono">fatou / gestion123</p>
-          </div>
+          {onForgotPassword && (
+            <button
+              type="button"
+              onClick={onForgotPassword}
+              className="w-full text-center text-sm text-blue-600 hover:underline mt-4"
+            >
+              Mot de passe oublié ?
+            </button>
+          )}
         </form>
+
+        <div className="mt-8 p-4 bg-gray-50 rounded-lg">
+          <p className="text-xs text-gray-600 text-center mb-2">Comptes de test :</p>
+          <div className="space-y-1 text-xs">
+            <p className="text-gray-700">👨‍💼 <strong>Admin:</strong> admin / admin123</p>
+            <p className="text-gray-700">👤 <strong>Gestionnaire:</strong> fatou / fatou123</p>
+          </div>
+        </div>
       </div>
     </div>
   );
