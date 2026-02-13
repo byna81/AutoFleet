@@ -2,7 +2,7 @@
 import React from 'react';
 import { LogOut } from 'lucide-react';
 
-const Sidebar = ({ currentUser, activeTab, setActiveTab, handleLogout, hasPermission }) => {
+const Sidebar = ({ currentUser, activeTab, setActiveTab, handleLogout, hasPermission, setShowChangePassword }) => {
   return (
     <div className="w-64 bg-gradient-to-b from-red-600 to-red-700 text-white flex flex-col h-screen">
       {/* Header avec logo */}
@@ -82,6 +82,16 @@ const Sidebar = ({ currentUser, activeTab, setActiveTab, handleLogout, hasPermis
           </button>
         )}
       </nav>
+
+      {/* Bouton Changer mot de passe */}
+      <div className="px-3 pb-2">
+        <button
+          onClick={() => setShowChangePassword(true)}
+          className="w-full text-left px-3 py-2.5 rounded font-medium hover:bg-red-800"
+        >
+          🔑 Changer mot de passe
+        </button>
+      </div>
 
       {/* Bouton déconnexion */}
       <div className="p-3 border-t border-red-500">
