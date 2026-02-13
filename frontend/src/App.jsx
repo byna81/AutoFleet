@@ -99,7 +99,19 @@ const App = () => {
           </div>
 
           {/* Content */}
-          {activeTab === 'dashboard' && <Dashboard payments={payments} />}
+          {activeTab === 'dashboard' && (
+            <Dashboard 
+              payments={payments}
+              drivers={drivers}
+              vehicles={vehicles}
+              managementContracts={managementContracts}
+              contracts={contracts}
+              maintenanceSchedule={maintenanceSchedule}
+              currentUser={currentUser}
+              hasPermission={hasPermission}
+              setActiveTab={setActiveTab}
+            />
+          )}
           
           {activeTab === 'payments' && (
             <Payments
