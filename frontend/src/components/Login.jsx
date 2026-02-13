@@ -72,10 +72,6 @@ const Login = ({ loginForm, setLoginForm, handleLogin, loginError, onForgotPassw
 
         <div className="mt-8 p-4 bg-gray-50 rounded-lg">
           <p className="text-xs text-gray-600 text-center mb-2">Comptes de test :</p>
-          <div className="space-y-1 text-xs">
-            <p className="text-gray-700">👨‍💼 <strong>Admin:</strong> admin / admin123</p>
-            <p className="text-gray-700">👤 <strong>Gestionnaire:</strong> fatou / fatou123</p>
-          </div>
         </div>
       </div>
     </div>
