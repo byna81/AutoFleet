@@ -11,6 +11,8 @@ import Owners from './components/Owners';
 import Users from './components/Users';
 import OwnerPayments from './components/OwnerPayments';
 import Maintenance from './components/Maintenance';
+import ChangePassword from './components/ChangePassword';
+import ForgotPassword from './components/ForgotPassword';
 import { 
   users as initialUsers, 
   initialPayments, 
@@ -36,6 +38,8 @@ const App = () => {
   const [drivers, setDrivers] = useState(initialDrivers);
   const [contracts, setContracts] = useState(initialContracts);
   const [maintenanceSchedule, setMaintenanceSchedule] = useState(initialMaintenanceSchedule);
+  const [showChangePassword, setShowChangePassword] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -62,12 +66,23 @@ const App = () => {
   };
 
   if (!isLoggedIn) {
+    if (showForgotPassword) {
+      return (
+        <ForgotPassword
+          allUsers={allUsers}
+          setAllUsers={setAllUsers}
+          onBack={() => setShowForgotPassword(false)}
+        />
+      );
+    }
+    
     return (
       <Login
         loginForm={loginForm}
         setLoginForm={setLoginForm}
         handleLogin={handleLogin}
         loginError={loginError}
+        onForgotPassword={() => setShowForgotPassword(true)}
       />
     );
   }
@@ -80,9 +95,19 @@ const App = () => {
         setActiveTab={setActiveTab}
         handleLogout={handleLogout}
         hasPermission={hasPermission}
+        setShowChangePassword={setShowChangePassword}
       />
 
       <div className="flex-1 overflow-auto">
+        {showChangePassword && (
+          <ChangePassword
+            currentUser={currentUser}
+            allUsers={allUsers}
+            setAllUsers={setAllUsers}
+            onClose={() => setShowChangePassword(false)}
+          />
+        )}
+        
         <div className="p-8">
           {/* Header */}
           <div className="mb-8 bg-gradient-to-r from-red-600 to-red-700 rounded-2xl p-6 text-white shadow-xl">
