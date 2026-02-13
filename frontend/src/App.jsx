@@ -1,6 +1,4 @@
 // App.jsx - Application FINALE avec tous les props corrects
-import { supabase } from './lib/supabaseClient';
-import { useEffect } from 'react';
 import React, { useState } from 'react';
 import Login from './components/Login';
 import Sidebar from './components/Sidebar';
